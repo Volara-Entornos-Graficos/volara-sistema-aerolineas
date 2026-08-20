@@ -1,0 +1,7 @@
+# VOLARA — Archivos ignorados por Git
+
+.env
+config/database.local.php
+*.log
+.DS_Store
+Thumbs.db
