@@ -188,9 +188,9 @@ require_once __DIR__ . '/../../includes/navbar.php';
                         <div class="flight-price">
                             <div class="amount"><?= formatPrice((float)$vuelo['precio']) ?></div>
                         </div>
-                        <a href="<?= url('pages/publico/detalle-vuelo.php?id=' . $vuelo['id']) ?>"
+                        <a href="<?= url('pages/publico/buscar.php') ?>"
                            class="btn btn-volara btn-volara-sm">
-                            Ver detalle
+                            Buscar este vuelo
                         </a>
                     </div>
                 </article>
@@ -231,11 +231,6 @@ require_once __DIR__ . '/../../includes/navbar.php';
             <?php endforeach; ?>
         </div>
 
-        <div class="text-center mt-4">
-            <a href="<?= url('pages/publico/novedades.php') ?>" class="btn btn-volara-outline">
-                Ver todas las novedades
-            </a>
-        </div>
     </div>
 </section>
 <?php endif; ?>

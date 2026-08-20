@@ -12,16 +12,14 @@
                 <ul class="footer-links">
                     <li><a href="<?= url('index.php') ?>">Inicio</a></li>
                     <li><a href="<?= url('pages/publico/buscar.php') ?>">Buscar vuelos</a></li>
-                    <li><a href="<?= url('pages/publico/aerolineas.php') ?>">Aerolíneas</a></li>
-                    <li><a href="<?= url('pages/publico/novedades.php') ?>">Novedades</a></li>
+                    <li><a href="<?= url('pages/publico/mapa-sitio.php') ?>">Mapa del sitio</a></li>
                 </ul>
             </div>
 
             <div class="col-6 col-lg-2">
                 <h6 class="footer-heading">Ayuda</h6>
                 <ul class="footer-links">
-                    <li><a href="<?= url('pages/publico/ayuda.php') ?>">Centro de ayuda</a></li>
-                    <li><a href="<?= url('pages/publico/contacto.php') ?>">Contacto</a></li>
+                    <li><a href="<?= url('pages/publico/buscar.php') ?>">Buscar vuelos</a></li>
                     <li><a href="<?= url('pages/publico/mapa-sitio.php') ?>">Mapa del sitio</a></li>
                 </ul>
             </div>
@@ -29,8 +27,7 @@
             <div class="col-6 col-lg-2">
                 <h6 class="footer-heading">Legal</h6>
                 <ul class="footer-links">
-                    <li><a href="<?= url('pages/publico/terminos.php') ?>">Términos y condiciones</a></li>
-                    <li><a href="<?= url('pages/publico/privacidad.php') ?>">Política de privacidad</a></li>
+                    <li><a href="<?= url('pages/publico/mapa-sitio.php') ?>">Información del sitio</a></li>
                 </ul>
             </div>
 
@@ -38,8 +35,7 @@
                 <h6 class="footer-heading">Cuenta</h6>
                 <ul class="footer-links">
                     <?php if (isLoggedIn()): ?>
-                        <li><a href="<?= url('pages/usuario/perfil.php') ?>">Mi perfil</a></li>
-                        <li><a href="<?= url('pages/usuario/mis-reservas.php') ?>">Mis reservas</a></li>
+                        <li><a href="<?= url(dashboardUrl()) ?>">Mi cuenta</a></li>
                         <li><a href="<?= url('auth/logout.php') ?>">Cerrar sesión</a></li>
                     <?php else: ?>
                         <li><a href="<?= url('auth/login.php') ?>">Iniciar sesión</a></li>

@@ -160,9 +160,9 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                     <?php endif; ?>
                                     <div class="amount"><?= formatPrice($precioFinal) ?></div>
                                 </div>
-                                <a href="<?= url('pages/publico/detalle-vuelo.php?id=' . $vuelo['id']) ?>"
+                                <a href="<?= url('pages/publico/buscar.php') ?>"
                                    class="btn btn-volara btn-volara-sm">
-                                    Seleccionar vuelo
+                                    Nueva búsqueda
                                 </a>
                             </div>
                         </article>

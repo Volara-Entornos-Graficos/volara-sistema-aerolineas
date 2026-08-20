@@ -11,6 +11,7 @@ $extraCss = $extraCss ?? [];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#151D25">
     <meta name="description" content="<?= e($pageDescription) ?>">
     <title><?= e($pageTitle) ?> — <?= APP_NAME ?></title>
 

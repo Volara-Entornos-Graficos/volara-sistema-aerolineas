@@ -1,9 +1,11 @@
 <?php
 $user = currentUser();
 $initials = $user ? strtoupper(substr($user['nombre'], 0, 1) . substr($user['apellido'], 0, 1)) : '';
+$currentPage = basename(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH));
+$isActive = static fn(array $pages): string => in_array($currentPage, $pages, true) ? 'active' : '';
 ?>
 <nav class="navbar navbar-expand-lg volara-navbar" aria-label="Navegación principal">
-    <div class="container">
+    <div class="container" >
         <a class="navbar-brand" href="<?= url('index.php') ?>" aria-label="VOLARA — Inicio">
             <img src="<?= asset('img/logo/Volara-Sistema de aerolineas.png') ?>"
                  alt="Logo VOLARA — Sistema de aerolíneas"
@@ -20,20 +22,19 @@ $initials = $user ? strtoupper(substr($user['nombre'], 0, 1) . substr($user['ape
         <div class="collapse navbar-collapse" id="volaraNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?= isActivePage('inicio') ?>"
-                       href="<?= url('index.php') ?>">Inicio</a>
+                    <a class="nav-link <?= $isActive(['index.php', 'inicio.php']) ?>"
+                       href="<?= url('index.php') ?>"
+                       <?= $isActive(['index.php', 'inicio.php']) ? 'aria-current="page"' : '' ?>>
+                        Inicio
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"
-                       href="<?= url('pages/publico/buscar.php') ?>">Buscar vuelos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="<?= url('pages/publico/aerolineas.php') ?>">Aerolíneas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="<?= url('pages/publico/novedades.php') ?>">Novedades</a>
+                    <a class="nav-link <?= $isActive(['buscar.php', 'resultados.php']) ?>"
+                       href="<?= url('pages/publico/buscar.php') ?>"
+                       <?= $isActive(['buscar.php', 'resultados.php']) ? 'aria-current="page"' : '' ?>>
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <span>Buscar vuelos</span>
+                    </a>
                 </li>
             </ul>
 
@@ -41,24 +42,20 @@ $initials = $user ? strtoupper(substr($user['nombre'], 0, 1) . substr($user['ape
                 <?php if ($user): ?>
                     <?php if ($user['rol'] === 'pasajero'): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= url('pages/usuario/mis-reservas.php') ?>">
-                                <i class="bi bi-ticket-perforated me-1"></i> Mis reservas
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= url('pages/usuario/historial.php') ?>">
-                                <i class="bi bi-clock-history me-1"></i> Historial
+                            <a class="nav-link <?= $isActive(['inicioUsuario.php']) ?>"
+                               href="<?= url('pages/usuario/inicioUsuario.php') ?>">
+                                <i class="bi bi-person-circle me-1"></i> Mi cuenta
                             </a>
                         </li>
                     <?php elseif ($user['rol'] === 'admin'): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= url('pages/admin/dashboard.php') ?>">
+                            <a class="nav-link <?= $isActive(['inicioAdmin.php']) ?>" href="<?= url('pages/admin/inicioAdmin.php') ?>">
                                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
                             </a>
                         </li>
                     <?php elseif ($user['rol'] === 'ceo'): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= url('pages/ceo/dashboard.php') ?>">
+                            <a class="nav-link <?= $isActive(['inicioCeo.php']) ?>" href="<?= url('pages/ceo/inicioCeo.php') ?>">
                                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
                             </a>
                         </li>
@@ -67,13 +64,13 @@ $initials = $user ? strtoupper(substr($user['nombre'], 0, 1) . substr($user['ape
                     <li class="nav-item dropdown user-menu">
                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
                            href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
+                           aria-expanded="false" aria-label="Abrir menú de <?= e($user['nombre']) ?>">
                             <span class="user-avatar" aria-hidden="true"><?= e($initials) ?></span>
-                            <span><?= e($user['nombre']) ?></span>
+                            <span class="user-name"><?= e($user['nombre']) ?></span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                             <li>
-                                <a class="dropdown-item" href="<?= url('pages/usuario/perfil.php') ?>">
+                                <a class="dropdown-item" href="<?= url(dashboardUrl()) ?>">
                                     <i class="bi bi-person me-2"></i> Mi perfil
                                 </a>
                             </li>

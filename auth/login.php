@@ -69,21 +69,33 @@ require_once __DIR__ . '/../includes/navbar.php';
                             <div class="form-group">
                                 <label class="volara-label" for="email">Email</label>
                                 <input type="email" class="volara-input" id="email" name="email"
-                                       value="<?= old('email') ?>" required autocomplete="email"
-                                       placeholder="tu@email.com">
+                                    value="<?= old('email') ?>" required autocomplete="email"
+                                    placeholder="tu@email.com">
                             </div>
 
                             <div class="form-group">
                                 <label class="volara-label" for="password">Contraseña</label>
-                                <input type="password" class="volara-input" id="password" name="password"
-                                       required autocomplete="current-password"
-                                       placeholder="••••••••">
-                            </div>
 
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <a href="<?= url('auth/recuperar.php') ?>" class="small">
-                                    ¿Olvidaste tu contraseña?
-                                </a>
+                                <div class="input-group">
+                                    <input
+                                        type="password"
+                                        class="form-control input-password volara-input"
+                                        id="password"
+                                        name="password"
+                                        required
+                                        autocomplete="current-password"
+                                        placeholder="••••••••">
+
+                                    <button
+                                        class="btn btn-outline-secondary"
+                                        type="button"
+                                        data-toggle-password="password"
+                                        aria-label="Mostrar contraseña">
+
+                                        <i class="bi bi-eye"></i>
+
+                                    </button>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-volara w-100 btn-volara-lg">

@@ -67,32 +67,50 @@ h1, h2, h3, h4, h5, h6 {
 .volara-navbar {
     background: var(--volara-white);
     border-bottom: 1px solid var(--volara-border);
-    height: var(--navbar-h);
+    min-height: var(--navbar-h);
     position: sticky;
     top: 0;
     z-index: 1030;
-    transition: box-shadow var(--transition);
+    transition: box-shadow var(--transition), border-color var(--transition);
 }
-.volara-navbar.scrolled { box-shadow: var(--shadow-sm); }
+.volara-navbar.scrolled {
+    border-color: transparent;
+    box-shadow: 0 4px 18px rgba(21, 29, 37, 0.1);
+}
 
 .volara-navbar .navbar-brand img {
-    height: 40px;
-    width: auto;
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+    display: block;
+    background: var(--volara-white);
+}
+.volara-navbar .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    padding: 0;
 }
 
 .volara-navbar .nav-link {
     color: var(--volara-dark);
     font-weight: 500;
     font-size: 0.925rem;
-    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 0.85rem;
     border-radius: var(--radius-sm);
-    transition: color var(--transition), background var(--transition);
+    transition: color var(--transition), background var(--transition), transform var(--transition);
 }
 .volara-navbar .nav-link:hover,
 .volara-navbar .nav-link.active {
     color: var(--volara-red);
     background: var(--volara-red-light);
 }
+.volara-navbar .nav-link:hover { transform: translateY(-1px); }
+.volara-navbar .nav-link i { font-size: 0.9rem; }
+.volara-navbar .navbar-nav.me-auto { gap: 0.5rem; }
 
 .volara-navbar .navbar-toggler {
     border: none;
@@ -105,6 +123,20 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: 0.5rem;
 }
+.user-menu .nav-link::after { margin-left: 0.15rem; }
+.user-menu .dropdown-menu {
+    min-width: 12rem;
+    margin-top: 0.65rem;
+    padding: 0.45rem;
+    border: 1px solid var(--volara-border);
+    border-radius: var(--radius-md);
+}
+.user-menu .dropdown-item {
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+}
+.user-menu .dropdown-item:hover { background: var(--volara-gray-light); }
 .user-avatar {
     width: 32px;
     height: 32px;
@@ -415,34 +447,37 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── Hero ──────────────────────────────────────────────── */
 .hero {
-    background: linear-gradient(135deg, var(--volara-gray-light) 0%, var(--volara-white) 60%);
+    background-image: url('../img/destinos/138416-avion_blanco_en_el_aire_durante_el_dia-3840x2160.jpg');
+    background-size: cover;
+    background-position: center 42%;
     padding: 4rem 0 5rem;
     position: relative;
     overflow: hidden;
 }
-.hero::after {
+.hero::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(229,27,35,0.04) 0%, transparent 70%);
+    inset: 0;
+    background: rgba(10, 14, 19, 0.56);
     pointer-events: none;
+}
+.hero > .container {
+    position: relative;
+    z-index: 1;
 }
 
 .hero-title {
     font-size: clamp(2rem, 5vw, 3.25rem);
     font-weight: 800;
-    color: var(--volara-dark);
+    color: var(--volara-white);
     line-height: 1.15;
     margin-bottom: 1rem;
 }
-.hero-title span { color: var(--volara-red); }
+.hero-title span { color: #FF6B70; }
 
 .hero-subtitle {
     font-size: 1.125rem;
-    color: var(--volara-gray);
+    color: rgba(255, 255, 255, 0.88);
     max-width: 520px;
     margin-bottom: 2.5rem;
 }
@@ -482,11 +517,15 @@ h1, h2, h3, h4, h5, h6 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 1rem;
-    align-items: end;
+    align-items: start;
 }
 .search-fields .search-btn-wrap {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
+    padding-top: 1.65rem;
+}
+.search-fields .form-error {
+    min-height: 1.25rem;
 }
 
 /* ─── Alerts ────────────────────────────────────────────── */
@@ -618,6 +657,7 @@ h1, h2, h3, h4, h5, h6 {
     cursor: pointer;
     transition: all var(--transition);
     user-select: none;
+    -webkit-user-select: none;
 }
 .seat:hover:not(.occupied):not(.selected) {
     border-color: var(--volara-red);
@@ -804,12 +844,21 @@ h1, h2, h3, h4, h5, h6 {
         border-radius: var(--radius-md);
         box-shadow: var(--shadow-md);
     }
+    .volara-navbar .navbar-nav { gap: 0.25rem; }
+    .volara-navbar .nav-link { width: 100%; }
+    .volara-navbar .navbar-nav.ms-auto { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--volara-border); }
+    .volara-navbar .btn-volara-sm { display: inline-flex; width: 100%; justify-content: center; margin-top: 0.25rem; }
+    .user-menu .dropdown-menu { margin-top: 0.25rem; box-shadow: none !important; }
     .flight-route { gap: 1rem; }
     .flight-airport .code { font-size: 1.4rem; }
     .flight-price { margin-left: 0; margin-top: 1rem; text-align: left; }
 }
 
 @media (max-width: 767.98px) {
+    .volara-navbar .navbar-brand img {
+        width: 48px;
+        height: 48px;
+    }
     .hero { padding: 2.5rem 0 3rem; }
     .search-box { padding: 1.25rem; border-radius: var(--radius-lg); }
     .search-fields { grid-template-columns: 1fr; }

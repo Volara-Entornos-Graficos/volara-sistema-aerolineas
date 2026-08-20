@@ -2,12 +2,19 @@
  * VOLARA — JavaScript principal
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
     initNavbar();
     initSearchForm();
     initDeleteConfirmations();
     initFormValidation();
-});
+    initPasswordToggles();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
 
 /* ─── Navbar scroll effect ──────────────────────────────── */
 function initNavbar() {
@@ -178,5 +185,27 @@ function initSeatMap(containerId, occupiedSeats, onSelect) {
         }
     });
 }
+/* ─── Mostrar / ocultar contraseñas ─────────────────────── */
+/* ─── Mostrar / ocultar contraseñas ─────────────────────── */
+function initPasswordToggles() {
+    document.addEventListener('click', (event) => {
+        if (!(event.target instanceof Element)) return;
 
+        const button = event.target.closest('[data-toggle-password]');
+        if (!button) return;
+
+        const input = document.getElementById(button.dataset.togglePassword);
+        const icon = button.querySelector('i');
+        if (!input || !icon) return;
+
+        icon.style.pointerEvents = 'none';
+
+        const mostrar = input.type === 'password';
+        input.type = mostrar ? 'text' : 'password';
+        icon.classList.toggle('bi-eye', !mostrar);
+        icon.classList.toggle('bi-eye-slash', mostrar);
+        button.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        button.setAttribute('aria-pressed', String(mostrar));
+    });
+}
 window.initSeatMap = initSeatMap;

@@ -64,8 +64,8 @@ function logoutUser(): void
 function dashboardUrl(): string
 {
     return match (userRole()) {
-        'admin'    => 'pages/admin/dashboard.php',
-        'ceo'      => 'pages/ceo/dashboard.php',
+        'admin'    => 'pages/admin/inicioAdmin.php',
+        'ceo'      => 'pages/ceo/inicioCeo.php',
         'pasajero' => 'pages/usuario/inicioUsuario.php',
         default    => 'index.php',
     };
