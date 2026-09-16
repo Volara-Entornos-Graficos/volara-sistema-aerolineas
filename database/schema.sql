@@ -16,10 +16,17 @@ CREATE TABLE usuarios (
     documento       VARCHAR(20)  DEFAULT NULL,
     aerolinea_id    INT UNSIGNED DEFAULT NULL,
     activo          TINYINT(1)   NOT NULL DEFAULT 1,
+    email_verificado TINYINT(1)   NOT NULL DEFAULT 0,
+    estado_aprobacion ENUM('pendiente','aprobado','rechazado') NOT NULL DEFAULT 'aprobado',
+    token_activacion VARCHAR(100) DEFAULT NULL,
+    token_activacion_expira DATETIME DEFAULT NULL,
     token_reset     VARCHAR(100) DEFAULT NULL,
     token_expira    DATETIME     DEFAULT NULL,
     created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_usuario_token_activacion (token_activacion),
+    KEY idx_usuario_rol_activo (rol, activo),
+    KEY idx_usuario_aerolinea_rol (aerolinea_id, rol)
 ) ENGINE=InnoDB;
 
 -- ─── Aerolíneas ─────────────────────────────────────────────
@@ -31,7 +38,8 @@ CREATE TABLE aerolineas (
     logo            VARCHAR(255) DEFAULT NULL,
     estado          ENUM('activa','inactiva') NOT NULL DEFAULT 'activa',
     created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_aerolinea_estado (estado)
 ) ENGINE=InnoDB;
 
 ALTER TABLE usuarios
@@ -59,6 +67,9 @@ CREATE TABLE vuelos (
     estado              ENUM('programado','cancelado','completado') NOT NULL DEFAULT 'programado',
     created_at          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_vuelo_busqueda (origen_codigo, destino_codigo, fecha_salida),
+    KEY idx_vuelo_estado_fecha (estado, fecha_salida),
+    KEY idx_vuelo_aerolinea_estado (aerolinea_id, estado),
     CONSTRAINT fk_vuelo_aerolinea FOREIGN KEY (aerolinea_id) REFERENCES aerolineas(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -71,6 +82,7 @@ CREATE TABLE asientos (
     clase       ENUM('economica','premium','business') NOT NULL DEFAULT 'economica',
     estado      ENUM('disponible','ocupado','bloqueado') NOT NULL DEFAULT 'disponible',
     UNIQUE KEY uk_asiento_vuelo (vuelo_id, fila, columna),
+    KEY idx_asiento_estado (vuelo_id, estado),
     CONSTRAINT fk_asiento_vuelo FOREIGN KEY (vuelo_id) REFERENCES vuelos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -86,6 +98,8 @@ CREATE TABLE promociones (
     fecha_fin           DATE         DEFAULT NULL,
     created_at          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_promo_aerolinea_estado (aerolinea_id, estado),
+    KEY idx_promo_vigencia (estado, fecha_inicio, fecha_fin),
     CONSTRAINT fk_promo_aerolinea FOREIGN KEY (aerolinea_id) REFERENCES aerolineas(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -105,6 +119,9 @@ CREATE TABLE reservas (
     fecha_reserva   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_pago      DATETIME     DEFAULT NULL,
     fecha_cancelacion DATETIME   DEFAULT NULL,
+    KEY idx_reserva_usuario_estado (usuario_id, estado),
+    KEY idx_reserva_vuelo_estado (vuelo_id, estado),
+    KEY idx_reserva_fecha (fecha_reserva),
     CONSTRAINT fk_reserva_usuario   FOREIGN KEY (usuario_id)   REFERENCES usuarios(id),
     CONSTRAINT fk_reserva_vuelo     FOREIGN KEY (vuelo_id)     REFERENCES vuelos(id),
     CONSTRAINT fk_reserva_asiento   FOREIGN KEY (asiento_id)   REFERENCES asientos(id) ON DELETE SET NULL,
@@ -118,8 +135,12 @@ CREATE TABLE novedades (
     contenido   TEXT         NOT NULL,
     imagen      VARCHAR(255) DEFAULT NULL,
     activa      TINYINT(1)   NOT NULL DEFAULT 1,
+    fecha_inicio DATE         DEFAULT NULL,
+    fecha_expiracion DATE     DEFAULT NULL,
     created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_novedad_publicacion (activa, fecha_inicio, fecha_expiracion),
+    KEY idx_novedad_fecha (created_at)
 ) ENGINE=InnoDB;
 
 -- ─── Datos iniciales ────────────────────────────────────────
@@ -128,15 +149,14 @@ INSERT INTO aerolineas (codigo, nombre, descripcion, estado) VALUES
 ('AR',  'Aerolíneas Argentinas', 'La aerolínea de bandera de Argentina.', 'activa'),
 ('LA',  'LATAM Airlines', 'Conectando Sudamérica con el mundo.', 'activa');
 
--- Admin / CEO / Pasajero demo — contraseña: password
-INSERT INTO usuarios (nombre, apellido, email, password, rol) VALUES
-('Admin', 'Sistema', 'admin@volara.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+INSERT INTO usuarios (nombre, apellido, email, password, rol, email_verificado) VALUES
+('Admin', 'Sistema', 'admin@volara.com', '$2y$10$92IXUNpkj0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1);
 
-INSERT INTO usuarios (nombre, apellido, email, password, rol, aerolinea_id) VALUES
-('Carlos', 'Mendoza', 'ceo@volara.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'ceo', 1);
+INSERT INTO usuarios (nombre, apellido, email, password, rol, aerolinea_id, email_verificado) VALUES
+('Carlos', 'Mendoza', 'ceo@volara.com', '$2y$10$92IXUNpkj0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'ceo', 1, 1);
 
-INSERT INTO usuarios (nombre, apellido, email, password, rol) VALUES
-('María', 'González', 'maria@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pasajero');
+INSERT INTO usuarios (nombre, apellido, email, password, rol, email_verificado) VALUES
+('María', 'González', 'maria@email.com', '$2y$10$92IXUNpkj0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pasajero', 1);
 
 INSERT INTO vuelos (codigo, aerolinea_id, origen, origen_codigo, destino, destino_codigo,
     fecha_salida, fecha_llegada, precio, asientos_total, asientos_disponibles, clase, avion_modelo, avion_distancia, avion_velocidad) VALUES

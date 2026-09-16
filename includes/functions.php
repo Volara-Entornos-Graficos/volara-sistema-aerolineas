@@ -24,6 +24,32 @@ function e(?string $value): string
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+function airportSearchTerms(string $value): array
+{
+    $value = trim($value);
+    if (preg_match('/^(.*?)\s*\(([A-Za-z0-9]{3,5})\)$/', $value, $matches)) {
+        return [trim($matches[1]), strtoupper($matches[2])];
+    }
+
+    return [$value, strtoupper($value)];
+}
+
+function csrfToken(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf_token'];
+}
+
+function verifyCsrfToken(?string $token): bool
+{
+    return is_string($token)
+        && isset($_SESSION['csrf_token'])
+        && hash_equals($_SESSION['csrf_token'], $token);
+}
+
 function setFlash(string $type, string $message): void
 {
     $_SESSION['flash'] = ['type' => $type, 'message' => $message];

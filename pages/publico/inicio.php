@@ -8,7 +8,11 @@ $aeropuertos = ['ROS', 'AEP', 'EZE', 'COR', 'BRC', 'MAD', 'MIA', 'GRU'];
 try {
     $db = getDB();
 
-    $stmt = $db->query('SELECT titulo, contenido, created_at FROM novedades WHERE activa = 1 ORDER BY created_at DESC LIMIT 3');
+        $stmt = $db->query("SELECT titulo, contenido, created_at FROM novedades
+                                                WHERE activa = 1
+                                                    AND (fecha_inicio IS NULL OR fecha_inicio <= CURDATE())
+                                                    AND (fecha_expiracion IS NULL OR fecha_expiracion >= CURDATE())
+                                                ORDER BY created_at DESC LIMIT 3");
     $novedades = $stmt->fetchAll();
 
     $stmt = $db->query(
@@ -69,7 +73,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                placeholder="Ciudad o aeropuerto" required
                                list="aeropuertos-list" autocomplete="off"
                                aria-describedby="origen-error">
-                        <div class="form-error" id="origen-error"></div>
+                        <div class="form-error" id="origen-error" role="alert" aria-live="polite"></div>
                     </div>
 
                     <div class="form-group mb-0">
@@ -78,7 +82,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                placeholder="Ciudad o aeropuerto" required
                                list="aeropuertos-list" autocomplete="off"
                                aria-describedby="destino-error">
-                        <div class="form-error" id="destino-error"></div>
+                        <div class="form-error" id="destino-error" role="alert" aria-live="polite"></div>
                     </div>
 
                     <div class="form-group mb-0">
@@ -86,7 +90,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                         <input type="date" class="volara-input" id="fecha_ida" name="fecha_ida"
                                required min="<?= date('Y-m-d') ?>"
                                aria-describedby="fecha_ida-error">
-                        <div class="form-error" id="fecha_ida-error"></div>
+                        <div class="form-error" id="fecha_ida-error" role="alert" aria-live="polite"></div>
                     </div>
 
                     <div class="form-group mb-0" id="fechaVueltaGroup" style="display:none">
@@ -94,7 +98,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                         <input type="date" class="volara-input" id="fecha_vuelta" name="fecha_vuelta"
                                min="<?= date('Y-m-d') ?>"
                                aria-describedby="fecha_vuelta-error">
-                        <div class="form-error" id="fecha_vuelta-error"></div>
+                        <div class="form-error" id="fecha_vuelta-error" role="alert" aria-live="polite"></div>
                     </div>
 
                     <div class="form-group mb-0">
@@ -188,9 +192,9 @@ require_once __DIR__ . '/../../includes/navbar.php';
                         <div class="flight-price">
                             <div class="amount"><?= formatPrice((float)$vuelo['precio']) ?></div>
                         </div>
-                        <a href="<?= url('pages/publico/buscar.php') ?>"
+                        <a href="<?= url('pages/publico/detalle-vuelo.php?id=' . $vuelo['id']) ?>"
                            class="btn btn-volara btn-volara-sm">
-                            Buscar este vuelo
+                            Ver detalle
                         </a>
                     </div>
                 </article>

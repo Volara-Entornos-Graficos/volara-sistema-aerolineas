@@ -1,12 +1,20 @@
 <?php
 /**
  * Conexión a base de datos MySQL
+ * 
+ * NOTA: Las credenciales se cargan desde variables de entorno
+ * Nunca hardcodear credenciales en archivos versionados
  */
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'volara_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Cargar variables de entorno si no están cargadas
+if (!function_exists('env')) {
+    require_once __DIR__ . '/env.php';
+}
+
+define('DB_HOST', env('DB_HOST', 'localhost'));
+define('DB_NAME', env('DB_NAME', 'volara_db'));
+define('DB_USER', env('DB_USER', 'root'));
+define('DB_PASS', env('DB_PASS', ''));
 define('DB_CHARSET', 'utf8mb4');
 
 function getDB(): PDO

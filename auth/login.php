@@ -8,26 +8,71 @@ if (isLoggedIn()) {
 $pageTitle = 'Iniciar sesión';
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Rate limiting: proteger contra ataques de fuerza bruta
+$maxLoginAttempts = 5;
+$loginAttempts = $_SESSION['login_attempts'] ?? 0;
+$lastLoginAttempt = $_SESSION['last_login_attempt'] ?? 0;
+
+if ($loginAttempts >= $maxLoginAttempts) {
+    $timeSinceLastAttempt = time() - $lastLoginAttempt;
+    $delaySeconds = max(0, 30 - $timeSinceLastAttempt); // 30 segundos de delay
+    
+    if ($delaySeconds > 0) {
+        // Esperar un poco para desacelerar intentos
+        sleep(min(2, $delaySeconds));
+        $errors[] = "Demasiados intentos fallidos. Esperá $delaySeconds segundos e intentá nuevamente.";
+    } else {
+        // Resetear contador después del delay
+        $_SESSION['login_attempts'] = 0;
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$errors) {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (!$email || !$password) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $errors[] = 'La sesión del formulario venció. Recargá la página e intentá nuevamente.';
+    } elseif (!$email || !$password) {
         $errors[] = 'Completá todos los campos.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'El email no es válido.';
     } else {
         try {
             $db = getDB();
-            $stmt = $db->prepare('SELECT * FROM usuarios WHERE email = ? AND activo = 1 LIMIT 1');
+            $stmt = $db->prepare('SELECT * FROM usuarios WHERE email = ? LIMIT 1');
             $stmt->execute([$email]);
             $usuario = $stmt->fetch();
 
             if ($usuario && password_verify($password, $usuario['password'])) {
-                loginUser($usuario);
-                setFlash('success', 'Bienvenido/a, ' . $usuario['nombre'] . '!');
-                redirect(dashboardUrl());
+                if ((int)$usuario['activo'] !== 1) {
+                    $errors[] = match ($usuario['estado_aprobacion'] ?? null) {
+                        'pendiente' => 'Tu solicitud de CEO está pendiente de aprobación administrativa.',
+                        'rechazado' => 'Tu solicitud de CEO fue rechazada.',
+                        default     => 'La cuenta está inactiva. Contactá al administrador.',
+                    };
+                } elseif ((int)($usuario['email_verificado'] ?? 0) !== 1) {
+                    // Email verificado es OBLIGATORIO para todos los roles excepto admin
+                    if ($usuario['rol'] !== 'admin') {
+                        $errors[] = 'Verificá tu email antes de iniciar sesión. Revisá tu bandeja de entrada.';
+                    } else {
+                        // Admin puede iniciar sesión sin verificar (para emergencias)
+                        // pero se debería forzar verificación en perfil
+                        loginUser($usuario);
+                        $_SESSION['login_attempts'] = 0; // Reset en login exitoso
+                        setFlash('warning', 'Tu email no está verificado. Completá la verificación en tu perfil.');
+                        redirect(dashboardUrl());
+                    }
+                } else {
+                    loginUser($usuario);
+                    $_SESSION['login_attempts'] = 0; // Reset en login exitoso
+                    setFlash('success', 'Bienvenido/a, ' . $usuario['nombre'] . '!');
+                    redirect(dashboardUrl());
+                }
             } else {
+                // Fallo de autenticación: incrementar contador
+                $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+                $_SESSION['last_login_attempt'] = time();
                 $errors[] = 'Email o contraseña incorrectos.';
             }
         } catch (PDOException $e) {
@@ -66,6 +111,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                         <?php endif; ?>
 
                         <form method="POST" action="" data-validate novalidate>
+                            <input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>">
                             <div class="form-group">
                                 <label class="volara-label" for="email">Email</label>
                                 <input type="email" class="volara-input" id="email" name="email"
@@ -96,6 +142,10 @@ require_once __DIR__ . '/../includes/navbar.php';
 
                                     </button>
                                 </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mb-4">
+                                <a href="<?= url('auth/recuperar.php') ?>" class="small">¿Olvidaste tu contraseña?</a>
                             </div>
 
                             <button type="submit" class="btn btn-volara w-100 btn-volara-lg">

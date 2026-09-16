@@ -7,14 +7,23 @@ $origen     = trim($_GET['origen'] ?? '');
 $destino    = trim($_GET['destino'] ?? '');
 $fechaIda   = $_GET['fecha_ida'] ?? '';
 $fechaVuelta = $_GET['fecha_vuelta'] ?? '';
+$tipoViaje  = $_GET['tipo_viaje'] ?? 'ida';
 $pasajeros  = max(1, (int)($_GET['pasajeros'] ?? 1));
 $clase      = $_GET['clase'] ?? '';
 $page       = max(1, (int)($_GET['p'] ?? 1));
 
 $vuelos = [];
 $pagination = null;
+$origenTerms = airportSearchTerms($origen);
+$destinoTerms = airportSearchTerms($destino);
 
-if ($origen && $destino && $fechaIda) {
+if (!in_array($tipoViaje, ['ida', 'ida_vuelta'], true)) {
+    $tipoViaje = 'ida';
+}
+
+if ($tipoViaje === 'ida_vuelta' && (!$fechaVuelta || $fechaVuelta < $fechaIda)) {
+    setFlash('danger', 'La fecha de vuelta es obligatoria y debe ser posterior a la fecha de ida.');
+} elseif ($origen && $destino && $fechaIda) {
     try {
         $db = getDB();
         $where = ["v.estado = 'programado'", "v.asientos_disponibles >= ?", "DATE(v.fecha_salida) >= ?"];
@@ -22,13 +31,13 @@ if ($origen && $destino && $fechaIda) {
 
         if ($origen) {
             $where[] = "(v.origen LIKE ? OR v.origen_codigo LIKE ?)";
-            $params[] = "%$origen%";
-            $params[] = "%$origen%";
+            $params[] = "%{$origenTerms[0]}%";
+            $params[] = "%{$origenTerms[1]}%";
         }
         if ($destino) {
             $where[] = "(v.destino LIKE ? OR v.destino_codigo LIKE ?)";
-            $params[] = "%$destino%";
-            $params[] = "%$destino%";
+            $params[] = "%{$destinoTerms[0]}%";
+            $params[] = "%{$destinoTerms[1]}%";
         }
         if ($clase) {
             $where[] = "v.clase = ?";
@@ -43,11 +52,14 @@ if ($origen && $destino && $fechaIda) {
 
         $pagination = paginate($total, $page);
 
-        $sql = "SELECT v.*, a.nombre AS aerolinea_nombre, a.codigo AS aerolinea_codigo,
-                       p.descuento_porcentaje, p.titulo AS promo_titulo
+        $sql = "SELECT v.*, 'ida' AS tramo, a.nombre AS aerolinea_nombre, a.codigo AS aerolinea_codigo,
+                      p.descuento_porcentaje, p.titulo AS promo_titulo
                 FROM vuelos v
                 JOIN aerolineas a ON a.id = v.aerolinea_id
-                LEFT JOIN promociones p ON p.aerolinea_id = a.id AND p.estado = 'vigente'
+                  LEFT JOIN promociones p ON p.aerolinea_id = a.id
+                      AND p.estado = 'vigente'
+                      AND (p.fecha_inicio IS NULL OR p.fecha_inicio <= CURDATE())
+                      AND (p.fecha_fin IS NULL OR p.fecha_fin >= CURDATE())
                 WHERE $whereSql
                 ORDER BY v.fecha_salida ASC
                 LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}";
@@ -55,6 +67,36 @@ if ($origen && $destino && $fechaIda) {
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
         $vuelos = $stmt->fetchAll();
+
+        if ($tipoViaje === 'ida_vuelta') {
+            $returnWhere = ["v.estado = 'programado'", "v.asientos_disponibles >= ?", "DATE(v.fecha_salida) >= ?"];
+            $returnParams = [$pasajeros, $fechaVuelta];
+            $returnWhere[] = "(v.origen LIKE ? OR v.origen_codigo LIKE ?)";
+            $returnParams[] = "%{$destinoTerms[0]}%";
+            $returnParams[] = "%{$destinoTerms[1]}%";
+            $returnWhere[] = "(v.destino LIKE ? OR v.destino_codigo LIKE ?)";
+            $returnParams[] = "%{$origenTerms[0]}%";
+            $returnParams[] = "%{$origenTerms[1]}%";
+            if ($clase) {
+                $returnWhere[] = 'v.clase = ?';
+                $returnParams[] = $clase;
+            }
+
+            $returnSql = "SELECT v.*, 'vuelta' AS tramo, a.nombre AS aerolinea_nombre, a.codigo AS aerolinea_codigo,
+                                 p.descuento_porcentaje, p.titulo AS promo_titulo
+                          FROM vuelos v
+                          JOIN aerolineas a ON a.id = v.aerolinea_id
+                          LEFT JOIN promociones p ON p.aerolinea_id = a.id
+                              AND p.estado = 'vigente'
+                              AND (p.fecha_inicio IS NULL OR p.fecha_inicio <= CURDATE())
+                              AND (p.fecha_fin IS NULL OR p.fecha_fin >= CURDATE())
+                          WHERE " . implode(' AND ', $returnWhere) . "
+                          ORDER BY v.fecha_salida ASC
+                          LIMIT {$pagination['per_page']}";
+            $returnStmt = $db->prepare($returnSql);
+            $returnStmt->execute($returnParams);
+            $vuelos = array_merge($vuelos, $returnStmt->fetchAll());
+        }
     } catch (PDOException $e) {
         setFlash('danger', 'Error al buscar vuelos. Verificá la conexión a la base de datos.');
     }
@@ -79,6 +121,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
             <p class="text-muted mb-0 mt-2">
                 <?= e($origen) ?> → <?= e($destino) ?>
                 <?php if ($fechaIda): ?> · <?= formatDate($fechaIda) ?><?php endif; ?>
+                <?php if ($tipoViaje === 'ida_vuelta' && $fechaVuelta): ?> · Vuelta <?= formatDate($fechaVuelta) ?><?php endif; ?>
                 · <?= $pasajeros ?> pasajero<?= $pasajeros > 1 ? 's' : '' ?>
             </p>
             <?php endif; ?>
@@ -88,7 +131,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
     <section class="section">
         <div class="container">
             <?php $flash = getFlash(); if ($flash): ?>
-                <div class="volara-alert alert-<?= e($flash['type']) ?>"><?= e($flash['message']) ?></div>
+                <div class="volara-alert alert-<?= e($flash['type']) ?>" role="alert" aria-live="assertive"><?= e($flash['message']) ?></div>
             <?php endif; ?>
 
             <?php if (empty($vuelos)): ?>
@@ -101,7 +144,8 @@ require_once __DIR__ . '/../../includes/navbar.php';
                     </a>
                 </div>
             <?php else: ?>
-                <p class="text-muted mb-4"><?= $pagination['total'] ?> vuelo<?= $pagination['total'] !== 1 ? 's' : '' ?> encontrado<?= $pagination['total'] !== 1 ? 's' : '' ?></p>
+                <?php $displayedFlights = count($vuelos); ?>
+                <p class="text-muted mb-4"><?= $displayedFlights ?> vuelo<?= $displayedFlights !== 1 ? 's' : '' ?> encontrado<?= $displayedFlights !== 1 ? 's' : '' ?></p>
 
                 <div class="row g-4">
                     <?php foreach ($vuelos as $vuelo):
@@ -120,6 +164,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
 
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
+                                    <span class="volara-badge badge-neutral me-2"><?= $vuelo['tramo'] === 'vuelta' ? 'Vuelta' : 'Ida' ?></span>
                                     <span class="text-muted small"><?= e($vuelo['aerolinea_nombre']) ?></span>
                                     <span class="volara-badge badge-neutral ms-2"><?= e($vuelo['codigo']) ?></span>
                                 </div>
@@ -160,9 +205,9 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                     <?php endif; ?>
                                     <div class="amount"><?= formatPrice($precioFinal) ?></div>
                                 </div>
-                                <a href="<?= url('pages/publico/buscar.php') ?>"
+                                <a href="<?= url('pages/publico/detalle-vuelo.php?id=' . $vuelo['id']) ?>"
                                    class="btn btn-volara btn-volara-sm">
-                                    Nueva búsqueda
+                                    Seleccionar vuelo
                                 </a>
                             </div>
                         </article>

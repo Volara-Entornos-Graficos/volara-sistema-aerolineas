@@ -36,6 +36,13 @@ $isActive = static fn(array $pages): string => in_array($currentPage, $pages, tr
                         <span>Buscar vuelos</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= $isActive(['novedades.php']) ?>"
+                       href="<?= url('pages/publico/novedades.php') ?>"
+                       <?= $isActive(['novedades.php']) ? 'aria-current="page"' : '' ?>>
+                        Novedades
+                    </a>
+                </li>
             </ul>
 
             <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
@@ -45,6 +52,18 @@ $isActive = static fn(array $pages): string => in_array($currentPage, $pages, tr
                             <a class="nav-link <?= $isActive(['inicioUsuario.php']) ?>"
                                href="<?= url('pages/usuario/inicioUsuario.php') ?>">
                                 <i class="bi bi-person-circle me-1"></i> Mi cuenta
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= $isActive(['mis-reservas.php']) ?>"
+                               href="<?= url('pages/usuario/mis-reservas.php') ?>">
+                                <i class="bi bi-ticket-perforated me-1"></i> Mis reservas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= $isActive(['historial.php']) ?>"
+                               href="<?= url('pages/usuario/historial.php') ?>">
+                                <i class="bi bi-clock-history me-1"></i> Historial
                             </a>
                         </li>
                     <?php elseif ($user['rol'] === 'admin'): ?>
@@ -70,7 +89,7 @@ $isActive = static fn(array $pages): string => in_array($currentPage, $pages, tr
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                             <li>
-                                <a class="dropdown-item" href="<?= url(dashboardUrl()) ?>">
+                                <a class="dropdown-item" href="<?= url('pages/usuario/perfil.php') ?>">
                                     <i class="bi bi-person me-2"></i> Mi perfil
                                 </a>
                             </li>

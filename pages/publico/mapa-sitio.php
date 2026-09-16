@@ -8,6 +8,8 @@ $mapa = [
         'Inicio'                    => 'index.php',
         'Buscar vuelos'             => 'pages/publico/buscar.php',
         'Resultados de búsqueda'    => 'pages/publico/resultados.php',
+        'Detalle de vuelo'          => 'pages/publico/detalle-vuelo.php?id=1',
+        'Novedades'                 => 'pages/publico/novedades.php',
         'Mapa del sitio'            => 'pages/publico/mapa-sitio.php',
     ],
     'Autenticación' => [
@@ -16,12 +18,23 @@ $mapa = [
     ],
     'Pasajero' => [
         'Mi cuenta'                 => 'pages/usuario/inicioUsuario.php',
+        'Mi perfil'                 => 'pages/usuario/perfil.php',
+        'Mis reservas'              => 'pages/usuario/mis-reservas.php',
+        'Historial de compras'      => 'pages/usuario/historial.php',
+        'Selección de asiento'      => 'pages/usuario/seleccion-asiento.php?vuelo_id=1',
     ],
     'Administrador' => [
         'Dashboard'                 => 'pages/admin/inicioAdmin.php',
+        'Gestión de aerolíneas'     => 'pages/admin/aerolineas.php',
+        'Aprobación de promociones' => 'pages/admin/promociones.php',
+        'Gestión de novedades'      => 'pages/admin/novedades.php',
+        'Reportes'                  => 'pages/admin/reportes.php',
     ],
     'CEO de Aerolínea' => [
         'Dashboard'                 => 'pages/ceo/inicioCeo.php',
+        'Gestión de vuelos'         => 'pages/ceo/vuelos.php',
+        'Gestión de promociones'    => 'pages/ceo/promociones.php',
+        'Reportes'                  => 'pages/ceo/reportes.php',
     ],
 ];
 

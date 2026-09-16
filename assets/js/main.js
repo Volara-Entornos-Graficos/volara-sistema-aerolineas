@@ -8,6 +8,8 @@ function initApp() {
     initDeleteConfirmations();
     initFormValidation();
     initPasswordToggles();
+    initCeoRegistration();
+    initSeatSelection();
 }
 
 if (document.readyState === 'loading') {
@@ -59,7 +61,10 @@ function initSearchForm() {
     });
 
     form.addEventListener('submit', (e) => {
-        if (!validateSearchForm(form)) e.preventDefault();
+        if (!validateSearchForm(form)) {
+            e.preventDefault();
+            form.querySelector('.is-invalid')?.focus();
+        }
     });
 }
 
@@ -84,8 +89,9 @@ function validateSearchForm(form) {
         setFieldError(destino, 'Ingresá un destino');
         valid = false;
     }
+    const normalizeAirport = value => value.trim().toLowerCase().replace(/\s*\([^)]*\)$/, '');
     if (origen.value.trim() && destino.value.trim() &&
-        origen.value.trim().toLowerCase() === destino.value.trim().toLowerCase()) {
+        normalizeAirport(origen.value) === normalizeAirport(destino.value)) {
         setFieldError(destino, 'El destino debe ser diferente al origen');
         valid = false;
     }
@@ -108,12 +114,14 @@ function validateSearchForm(form) {
 
 function setFieldError(input, message) {
     input.classList.add('is-invalid');
+    input.setAttribute('aria-invalid', 'true');
     const errorEl = document.getElementById(input.id + '-error');
     if (errorEl) errorEl.textContent = message;
 }
 
 function clearFieldError(input) {
     input.classList.remove('is-invalid');
+    input.setAttribute('aria-invalid', 'false');
     const errorEl = document.getElementById(input.id + '-error');
     if (errorEl) errorEl.textContent = '';
 }
@@ -125,6 +133,8 @@ function initFormValidation() {
             if (!form.checkValidity()) {
                 e.preventDefault();
                 e.stopPropagation();
+                const firstInvalid = form.querySelector(':invalid');
+                firstInvalid?.focus();
             }
             form.classList.add('was-validated');
         });
@@ -206,6 +216,42 @@ function initPasswordToggles() {
         icon.classList.toggle('bi-eye-slash', mostrar);
         button.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
         button.setAttribute('aria-pressed', String(mostrar));
+    });
+}
+
+function initCeoRegistration() {
+    const roleInput = document.getElementById('rol');
+    const airlineGroup = document.getElementById('aerolineaGroup');
+    const airlineInput = document.getElementById('aerolinea_id');
+
+    if (!roleInput || !airlineGroup || !airlineInput) return;
+
+    const updateVisibility = () => {
+        const isCeo = roleInput.value === 'ceo';
+        airlineGroup.hidden = !isCeo;
+        airlineInput.required = isCeo;
+        if (!isCeo) airlineInput.value = '';
+    };
+
+    roleInput.addEventListener('change', updateVisibility);
+    updateVisibility();
+}
+
+function initSeatSelection() {
+    const container = document.getElementById('seatMap');
+    if (!container) return;
+
+    const occupiedSeats = JSON.parse(container.dataset.occupied || '[]');
+    const selectedLabel = document.getElementById('selectedSeatLabel');
+    const selectedInput = document.getElementById('selectedSeatInput');
+    const selectedId = document.getElementById('selectedSeatId');
+    const continueButton = document.getElementById('continueSeatButton');
+
+    initSeatMap('seatMap', occupiedSeats, (label, id) => {
+        if (selectedLabel) selectedLabel.textContent = label || 'Elegí un asiento';
+        if (selectedInput) selectedInput.value = label || '';
+        if (selectedId) selectedId.value = id || '';
+        if (continueButton) continueButton.disabled = !label;
     });
 }
 window.initSeatMap = initSeatMap;

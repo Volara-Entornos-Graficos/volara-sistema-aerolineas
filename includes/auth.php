@@ -40,6 +40,7 @@ function requireRole(string ...$roles): void
 
 function loginUser(array $usuario): void
 {
+    session_regenerate_id(true);
     $_SESSION['usuario_id'] = $usuario['id'];
     $_SESSION['usuario'] = [
         'id'           => $usuario['id'],

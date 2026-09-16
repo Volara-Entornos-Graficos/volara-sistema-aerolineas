@@ -5,9 +5,10 @@
 
 define('APP_NAME', 'VOLARA');
 define('APP_TAGLINE', 'Tu próximo destino comienza aquí.');
-define('APP_URL', '/volara-sistema-aerolineas');
+define('APP_URL', 'http://localhost/volara-sistema-aerolineas');
 define('APP_ROOT', dirname(__DIR__));
 define('APP_VERSION', '1.0.0');
+define('MAIL_FROM', 'volara.aerolinea@gmail.com');
 
 define('ITEMS_PER_PAGE', 10);
 define('CANCELACION_HORAS', 72);

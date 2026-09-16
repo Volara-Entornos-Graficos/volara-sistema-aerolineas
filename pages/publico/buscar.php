@@ -33,23 +33,23 @@ require_once __DIR__ . '/../../includes/navbar.php';
                     <div class="search-fields">
                         <div class="form-group mb-0">
                             <label class="volara-label" for="origen">Origen</label>
-                            <input type="text" class="volara-input" id="origen" name="origen" placeholder="Ciudad o aeropuerto" required list="aeropuertos-list">
-                            <div class="form-error" id="origen-error"></div>
+                            <input type="text" class="volara-input" id="origen" name="origen" placeholder="Ciudad o aeropuerto" required list="aeropuertos-list" aria-describedby="origen-error">
+                            <div class="form-error" id="origen-error" role="alert" aria-live="polite"></div>
                         </div>
                         <div class="form-group mb-0">
                             <label class="volara-label" for="destino">Destino</label>
-                            <input type="text" class="volara-input" id="destino" name="destino" placeholder="Ciudad o aeropuerto" required list="aeropuertos-list">
-                            <div class="form-error" id="destino-error"></div>
+                            <input type="text" class="volara-input" id="destino" name="destino" placeholder="Ciudad o aeropuerto" required list="aeropuertos-list" aria-describedby="destino-error">
+                            <div class="form-error" id="destino-error" role="alert" aria-live="polite"></div>
                         </div>
                         <div class="form-group mb-0">
                             <label class="volara-label" for="fecha_ida">Fecha de ida</label>
-                            <input type="date" class="volara-input" id="fecha_ida" name="fecha_ida" required min="<?= date('Y-m-d') ?>">
-                            <div class="form-error" id="fecha_ida-error"></div>
+                            <input type="date" class="volara-input" id="fecha_ida" name="fecha_ida" required min="<?= date('Y-m-d') ?>" aria-describedby="fecha_ida-error">
+                            <div class="form-error" id="fecha_ida-error" role="alert" aria-live="polite"></div>
                         </div>
                         <div class="form-group mb-0" id="fechaVueltaGroup" style="display:none">
                             <label class="volara-label" for="fecha_vuelta">Fecha de vuelta</label>
-                            <input type="date" class="volara-input" id="fecha_vuelta" name="fecha_vuelta" min="<?= date('Y-m-d') ?>">
-                            <div class="form-error" id="fecha_vuelta-error"></div>
+                            <input type="date" class="volara-input" id="fecha_vuelta" name="fecha_vuelta" min="<?= date('Y-m-d') ?>" aria-describedby="fecha_vuelta-error">
+                            <div class="form-error" id="fecha_vuelta-error" role="alert" aria-live="polite"></div>
                         </div>
                         <div class="form-group mb-0">
                             <label class="volara-label" for="pasajeros">Pasajeros</label>
