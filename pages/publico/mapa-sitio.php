@@ -24,14 +24,14 @@ $mapa = [
         'Selección de asiento'      => 'pages/usuario/seleccion-asiento.php?vuelo_id=1',
     ],
     'Administrador' => [
-        'Dashboard'                 => 'pages/admin/inicioAdmin.php',
+        'Panel de administración'                 => 'pages/admin/inicioAdmin.php',
         'Gestión de aerolíneas'     => 'pages/admin/aerolineas.php',
         'Aprobación de promociones' => 'pages/admin/promociones.php',
         'Gestión de novedades'      => 'pages/admin/novedades.php',
         'Reportes'                  => 'pages/admin/reportes.php',
     ],
     'CEO de Aerolínea' => [
-        'Dashboard'                 => 'pages/ceo/inicioCeo.php',
+        'Panel de aerolínea'                 => 'pages/ceo/inicioCeo.php',
         'Gestión de vuelos'         => 'pages/ceo/vuelos.php',
         'Gestión de promociones'    => 'pages/ceo/promociones.php',
         'Reportes'                  => 'pages/ceo/reportes.php',
