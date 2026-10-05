@@ -112,7 +112,7 @@ $flash = getFlash();
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
-<main>
+<main id="contenido-principal" class="management-page" tabindex="-1">
     <section class="page-header">
         <div class="container">
             <h1>Gestión de aerolíneas</h1>
@@ -164,8 +164,8 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                     <option value="inactiva" <?= ($editAirline['estado'] ?? '') === 'inactiva' ? 'selected' : '' ?>>Inactiva</option>
                                 </select>
                             </div>
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-volara">
+                            <div class="form-actions d-flex gap-2">
+                                <button type="submit" class="btn btn-volara flex-grow">
                                     <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar
                                 </button>
                                 <?php if ($editAirline): ?>
@@ -184,7 +184,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                 <p class="text-muted mb-0"><?= $pagination['total'] ?> registros</p>
                             </div>
                         </div>
-                        <div class="volara-table-responsive">
+                        <div class="volara-table-responsive" role="region" aria-label="Listado de aerolíneas" tabindex="0">
                             <table class="volara-table">
                                 <caption class="visually-hidden">Listado de aerolíneas</caption>
                                 <thead>
@@ -200,7 +200,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                                         <tr>
                                             <td><strong><?= e($airline['codigo']) ?></strong></td>
                                             <td><?= e($airline['nombre']) ?></td>
-                                            <td><span class="volara-badge <?= badgeClass($airline['estado']) ?>"><?= estadoLabel($airline['estado']) ?></span></td>
+                                            <td><span class="volara-badge badge-<?= $airline['estado'] === 'activa' ? 'approved' : 'pending' ?>"><?= estadoLabel($airline['estado']) ?></span></td>
                                             <td>
                                                 <div class="table-actions">
                                                     <a class="table-action-btn" href="?editar=<?= (int)$airline['id'] ?>" aria-label="Editar <?= e($airline['nombre']) ?>" title="Editar">
@@ -222,7 +222,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                             </table>
                         </div>
                         <?php if ($pagination['total_pages'] > 1): ?>
-                            <nav class="volara-pagination mt-4" aria-label="Paginación de aerolíneas">
+                            <nav class="volara-pagination mt-3" aria-label="Paginación de aerolíneas">
                                 <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                                     <?php if ($i === $pagination['current']): ?>
                                         <span class="active" aria-current="page"><?= $i ?></span>

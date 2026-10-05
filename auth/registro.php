@@ -118,7 +118,7 @@ require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/navbar.php';
 ?>
 
-<main>
+<main id="contenido-principal" tabindex="-1">
     <div class="page-header">
         <div class="container">
             <h1>Crear cuenta</h1>

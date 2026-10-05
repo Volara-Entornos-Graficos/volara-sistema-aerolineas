@@ -273,7 +273,7 @@ require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
 
-<main>
+<main id="contenido-principal" tabindex="-1">
 
     <section class="page-header">
 
@@ -380,6 +380,10 @@ require_once __DIR__ . '/../../includes/navbar.php';
 
                                         <?= e($reservation['vuelo_codigo']) ?>
 
+                                    </span>
+
+                                    <span class="reservation-code-label">
+                                        Código de reserva · <?= e($reservation['codigo']) ?>
                                     </span>
 
                                     <h2 class="h4 mt-2 mb-0">

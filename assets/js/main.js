@@ -159,13 +159,19 @@ function initSeatMap(containerId, occupiedSeats, onSelect) {
     let selectedSeat = null;
 
     container.querySelectorAll('.seat:not(.occupied)').forEach(seat => {
+        seat.setAttribute('aria-pressed', 'false');
+
         seat.addEventListener('click', () => {
             const label = seat.dataset.seat;
             if (seat.classList.contains('occupied')) return;
 
             if (selectedSeat) {
                 const prev = container.querySelector(`.seat[data-seat="${selectedSeat}"]`);
-                if (prev) prev.classList.remove('selected');
+                if (prev) {
+                    prev.classList.remove('selected');
+                    prev.setAttribute('aria-pressed', 'false');
+                    prev.setAttribute('aria-label', `Asiento ${selectedSeat} — disponible`);
+                }
             }
 
             if (selectedSeat === label) {
@@ -173,29 +179,26 @@ function initSeatMap(containerId, occupiedSeats, onSelect) {
                 onSelect(null);
             } else {
                 seat.classList.add('selected');
+                seat.setAttribute('aria-pressed', 'true');
+                seat.setAttribute('aria-label', `Asiento ${label} — seleccionado`);
                 selectedSeat = label;
                 onSelect(label, seat.dataset.id || null);
             }
         });
 
-        seat.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                seat.click();
-            }
-        });
     });
 
     occupiedSeats.forEach(label => {
         const seat = container.querySelector(`.seat[data-seat="${label}"]`);
         if (seat) {
             seat.classList.add('occupied');
-            seat.setAttribute('tabindex', '-1');
+            seat.disabled = true;
             seat.setAttribute('aria-disabled', 'true');
+            seat.setAttribute('aria-label', `Asiento ${label} — ocupado`);
+            seat.removeAttribute('aria-pressed');
         }
     });
 }
-/* ─── Mostrar / ocultar contraseñas ─────────────────────── */
 /* ─── Mostrar / ocultar contraseñas ─────────────────────── */
 function initPasswordToggles() {
     document.addEventListener('click', (event) => {

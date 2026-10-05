@@ -31,6 +31,7 @@ require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
 
+<main id="contenido-principal" tabindex="-1">
 <?php $flash = getFlash(); if ($flash): ?>
 <div class="container mt-3">
     <div class="volara-alert alert-<?= e($flash['type']) ?>" role="alert">
@@ -41,15 +42,73 @@ require_once __DIR__ . '/../../includes/navbar.php';
 
 <!-- Hero -->
 <section class="hero" aria-labelledby="hero-title">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-7">
-                <h1 id="hero-title" class="hero-title">
-                    Tu próximo destino<br><span>comienza aquí.</span>
-                </h1>
-                <p class="hero-subtitle">
-                    Buscá, compará y reservá vuelos de forma simple. VOLARA conecta pasajeros con las mejores aerolíneas.
-                </p>
+    <div class="container hero-shell">
+        <div class="hero-copy">
+            <h1 id="hero-title" class="hero-title">
+                Tu próximo destino<br><span>comienza aquí.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Buscá, compará y reservá vuelos de forma simple. VOLARA conecta pasajeros con las mejores aerolíneas.
+            </p>
+        </div>
+
+        <div class="hero-showcase" aria-hidden="true">
+            <div class="phone-card phone-card-left">
+                <div class="phone-topbar">
+                    <span class="phone-brand">VOLARA</span>
+                    <span class="phone-time">9:41</span>
+                </div>
+                <div class="phone-ticket">
+                    <div class="ticket-row ticket-row-top">
+                        <span class="ticket-label">FLIGHT TICKET</span>
+                        <span class="ticket-icon"><i class="bi bi-airplane"></i></span>
+                    </div>
+                    <div class="ticket-airports">
+                        <div>
+                            <small>DXB</small>
+                            <strong>08:30</strong>
+                        </div>
+                        <div class="ticket-route"><span>&rarr;</span></div>
+                        <div>
+                            <small>LHR</small>
+                            <strong>14:45</strong>
+                        </div>
+                    </div>
+                    <div class="ticket-meta">
+                        <span>Business Class</span>
+                        <strong>$1,120.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phone-card phone-card-center">
+                <div class="phone-topbar">
+                    <span class="phone-brand">Dashboard</span>
+                    <span class="phone-dots"><i class="bi bi-bell"></i></span>
+                </div>
+                <div class="plane-preview">
+                    <div class="plane-visual plane-visual-brown">
+                        <div class="plane-body"></div>
+                        <div class="plane-wing"></div>
+                        <div class="plane-tail"></div>
+                    </div>
+                </div>
+                <div class="plane-caption">741 Airline</div>
+            </div>
+
+            <div class="phone-card phone-card-right">
+                <div class="phone-topbar">
+                    <span class="phone-brand">SELECT SEAT</span>
+                    <span class="phone-dots"><i class="bi bi-bell"></i></span>
+                </div>
+                <div class="seat-slab">
+                    <div class="seat-grid">
+                        <span class="seat-seat">A1</span>
+                        <span class="seat-seat">B1</span>
+                        <span class="seat-seat active">C1</span>
+                        <span class="seat-seat">D1</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -234,7 +293,11 @@ require_once __DIR__ . '/../../includes/navbar.php';
             </div>
             <?php endforeach; ?>
         </div>
-
+        <div class="text-center mt-4">
+            <a href="<?= url('pages/publico/novedades.php') ?>" class="btn btn-volara-outline">
+                Ver todas las novedades <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
     </div>
 </section>
 <?php endif; ?>
@@ -273,4 +336,5 @@ require_once __DIR__ . '/../../includes/navbar.php';
     </div>
 </section>
 
+</main>
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>

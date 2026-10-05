@@ -52,7 +52,7 @@ if (!$errors) {
             $originalPrice = (float)$flight['precio'];
             $discountAmount = $originalPrice * ($discount / 100);
             $finalPrice = $originalPrice - $discountAmount;
-            $code = generateCode('VR', 8);
+            $code = generateUniqueReservationCode($db);
 
             $reservationStmt = $db->prepare(
                 'INSERT INTO reservas (codigo, usuario_id, vuelo_id, asiento_id, asiento_label, estado,
@@ -80,7 +80,7 @@ if (!$errors) {
         }
 
         if ($errors && $db->inTransaction()) $db->rollBack();
-    } catch (PDOException $e) {
+    } catch (PDOException | RuntimeException $e) {
         if (isset($db) && $db->inTransaction()) $db->rollBack();
         $errors[] = 'No se pudo crear la reserva. Intentá nuevamente.';
     }
@@ -89,11 +89,11 @@ if (!$errors) {
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
-<main>
-    <div class="page-header"><div class="container"><h1>Confirmar reserva</h1><nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= url('pages/usuario/inicioUsuario.php') ?>">Mi cuenta</a></li><li class="breadcrumb-item active">Confirmar reserva</li></ol></nav></div></div>
+<main id="contenido-principal" tabindex="-1">
+    <div class="page-header"><div class="container"><h1>Confirmar reserva</h1><?= bookingSteps('confirmacion') ?><nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= url('pages/usuario/inicioUsuario.php') ?>">Mi cuenta</a></li><li class="breadcrumb-item active">Confirmar reserva</li></ol></nav></div></div>
     <section class="section"><div class="container"><div class="row justify-content-center"><div class="col-lg-7">
         <?php if ($errors): ?><div class="volara-alert alert-danger" role="alert"><?= e(implode(' ', $errors)) ?></div><a href="<?= url('pages/publico/buscar.php') ?>" class="btn btn-volara">Volver a buscar</a><?php elseif ($reservation): ?>
-            <div class="volara-card reservation-success"><div class="reservation-success-icon"><i class="bi bi-check2" aria-hidden="true"></i></div><span class="eyebrow">Reserva creada</span><h2 class="h3 mt-2">Tu lugar está reservado</h2><p class="text-muted">La reserva queda pendiente de pago hasta completar la compra.</p><div class="reservation-code"><span>Código de reserva</span><strong><?= e($reservation['codigo']) ?></strong></div><dl class="reservation-details"><div><dt>Ruta</dt><dd><?= e($reservation['origen_codigo']) ?> → <?= e($reservation['destino_codigo']) ?></dd></div><div><dt>Salida</dt><dd><?= formatDate($reservation['fecha_salida']) ?> · <?= formatTime($reservation['fecha_salida']) ?></dd></div><div><dt>Asiento</dt><dd><?= e($reservation['asiento_label']) ?></dd></div><div><dt>Estado</dt><dd><span class="volara-badge badge-pending">Pendiente de pago</span></dd></div></dl><div class="flight-summary-price mt-4"><span>Total</span><strong><?= formatPrice($reservation['precio_final']) ?></strong><?php if ($reservation['descuento'] > 0): ?><del><?= formatPrice($reservation['precio_original']) ?></del><?php endif; ?></div><div class="d-flex gap-2 mt-4"><a href="<?= url('pages/publico/buscar.php') ?>" class="btn btn-volara">Buscar otro vuelo</a><a href="<?= url('pages/usuario/inicioUsuario.php') ?>" class="btn btn-volara-outline">Ir a mi cuenta</a></div></div>
+            <div class="volara-card reservation-success"><div class="reservation-success-icon"><i class="bi bi-check2" aria-hidden="true"></i></div><span class="eyebrow">Reserva creada</span><h2 class="h3 mt-2">Tu lugar está reservado</h2><p class="text-muted">La reserva queda pendiente de pago hasta completar la compra en Mis reservas.</p><div class="reservation-code"><span>Código de reserva</span><strong><?= e($reservation['codigo']) ?></strong></div><dl class="reservation-details"><div><dt>Vuelo</dt><dd><?= e($flight['codigo']) ?></dd></div><div><dt>Pasajero</dt><dd><?= e($user['nombre'] . ' ' . $user['apellido']) ?></dd></div><div><dt>Ruta</dt><dd><?= e($reservation['origen_codigo']) ?> → <?= e($reservation['destino_codigo']) ?></dd></div><div><dt>Salida</dt><dd><?= formatDate($reservation['fecha_salida']) ?> · <?= formatTime($reservation['fecha_salida']) ?></dd></div><div><dt>Asiento</dt><dd><?= e($reservation['asiento_label']) ?></dd></div><div><dt>Estado</dt><dd><span class="volara-badge badge-pending">Pendiente de pago</span></dd></div></dl><div class="flight-summary-price mt-4"><span>Precio original</span><strong><?= formatPrice($reservation['precio_original']) ?></strong><?php if ($reservation['descuento'] > 0): ?><span class="reservation-discount">Descuento aplicado <strong>−<?= formatPrice($reservation['descuento']) ?></strong></span><?php endif; ?><div class="reservation-total"><span>Total pendiente</span><strong><?= formatPrice($reservation['precio_final']) ?></strong></div></div><div class="d-flex flex-wrap gap-2 mt-4 justify-content-center"><a href="<?= url('pages/usuario/mis-reservas.php') ?>" class="btn btn-volara">Ver mis reservas</a><a href="<?= url('pages/publico/buscar.php') ?>" class="btn btn-volara-outline">Buscar otro vuelo</a><a href="<?= url('index.php') ?>" class="btn btn-volara-outline">Volver al inicio</a></div></div>
         <?php endif; ?>
     </div></div></div></section>
 </main>

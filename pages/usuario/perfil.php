@@ -61,7 +61,7 @@ $flash = getFlash();
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
-<main>
+<main id="contenido-principal" tabindex="-1">
     <section class="page-header"><div class="container"><h1>Mi perfil</h1><nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= url('pages/usuario/inicioUsuario.php') ?>">Mi cuenta</a></li><li class="breadcrumb-item active">Mi perfil</li></ol></nav></div></section>
     <section class="section"><div class="container"><div class="row justify-content-center"><div class="col-lg-7">
         <?php if ($errors): ?><div class="volara-alert alert-danger" role="alert"><?= e(implode(' ', $errors)) ?></div><?php endif; ?>

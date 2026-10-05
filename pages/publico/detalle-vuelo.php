@@ -23,7 +23,8 @@ try {
     );
     $stmt->execute([$flightId]);
     $flight = $stmt->fetch();
-    if (!$flight) {
+if (!$flight) {
+        http_response_code(404);
         $error = 'El vuelo no existe o ya no está disponible.';
     }
 } catch (PDOException $e) {
@@ -34,8 +35,8 @@ $pageTitle = $flight ? 'Detalle ' . $flight['codigo'] : 'Detalle de vuelo';
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
-<main>
-    <section class="page-header"><div class="container"><h1>Detalle del vuelo</h1><nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= url('pages/publico/buscar.php') ?>">Buscar vuelos</a></li><li class="breadcrumb-item active">Detalle</li></ol></nav></div></section>
+<main id="contenido-principal" tabindex="-1">
+    <section class="page-header"><div class="container"><h1>Detalle del vuelo</h1><?= bookingSteps('detalle') ?><nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= url('pages/publico/buscar.php') ?>">Buscar vuelos</a></li><li class="breadcrumb-item active">Detalle</li></ol></nav></div></section>
     <section class="section"><div class="container">
         <?php if ($error): ?>
             <div class="volara-alert alert-danger" role="alert"><?= e($error) ?></div>
@@ -48,7 +49,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                     <div class="flight-detail-route"><div><strong><?= e($flight['origen_codigo']) ?></strong><span><?= e($flight['origen']) ?></span><time><?= formatTime($flight['fecha_salida']) ?></time></div><div class="flight-detail-line"><i class="bi bi-airplane" aria-hidden="true"></i><span><?= flightDuration($flight['fecha_salida'], $flight['fecha_llegada']) ?></span></div><div><strong><?= e($flight['destino_codigo']) ?></strong><span><?= e($flight['destino']) ?></span><time><?= formatTime($flight['fecha_llegada']) ?></time></div></div>
                     <dl class="flight-detail-info"><div><dt>Salida</dt><dd><?= formatDate($flight['fecha_salida']) ?></dd></div><div><dt>Clase</dt><dd><?= estadoLabel($flight['clase']) ?></dd></div><div><dt>Asientos</dt><dd><?= (int)$flight['asientos_disponibles'] ?> disponibles</dd></div><div><dt>Avión</dt><dd><?= e($flight['avion_modelo'] ?: 'A confirmar') ?></dd></div></dl>
                 </article>
-                <aside class="volara-card flight-summary-card"><span class="eyebrow">Tu viaje</span><h2 class="h4 mt-2">Elegí tu asiento</h2><p class="text-muted">Seleccioná un lugar disponible para continuar con la reserva.</p><?php if ($discount > 0): ?><div class="volara-alert alert-success py-2"><i class="bi bi-tag" aria-hidden="true"></i> <?= number_format($discount, 0) ?>% de descuento aplicado</div><?php endif; ?><div class="flight-summary-price"><span>Precio final</span><strong><?= formatPrice($finalPrice) ?></strong><?php if ($discount > 0): ?><del><?= formatPrice((float)$flight['precio']) ?></del><?php endif; ?></div><?php if (isLoggedIn()): ?><a href="<?= url('pages/usuario/seleccion-asiento.php?vuelo_id=' . $flight['id']) ?>" class="btn btn-volara w-100 btn-volara-lg"><i class="bi bi-grid-3x3-gap" aria-hidden="true"></i> Elegir asiento</a><?php else: ?><a href="<?= url('auth/login.php') ?>" class="btn btn-volara w-100 btn-volara-lg">Iniciá sesión para reservar</a><?php endif; ?></aside>
+                <aside class="volara-card flight-summary-card"><span class="eyebrow">Tu viaje</span><h2 class="h4 mt-2">Elegí tu asiento</h2><p class="text-muted">Seleccioná un lugar disponible para continuar con la reserva.</p><?php if ($discount > 0): ?><div class="volara-alert alert-success py-2"><i class="bi bi-tag" aria-hidden="true"></i> <?= number_format($discount, 0) ?>% de descuento aplicado</div><?php endif; ?><div class="flight-summary-price"><span>Precio final</span><strong><?= formatPrice($finalPrice) ?></strong><?php if ($discount > 0): ?><del><?= formatPrice((float)$flight['precio']) ?></del><?php endif; ?></div><?php if (isLoggedIn()): ?><a href="<?= url('pages/usuario/seleccion-asiento.php?vuelo_id=' . $flight['id']) ?>" class="btn btn-volara w-100 btn-volara-lg"><i class="bi bi-grid-3x3-gap" aria-hidden="true"></i> Continuar con la reserva</a><?php else: ?><a href="<?= url('auth/login.php') ?>" class="btn btn-volara w-100 btn-volara-lg">Iniciá sesión para reservar</a><?php endif; ?></aside>
             </div>
         <?php endif; ?>
     </div></section>

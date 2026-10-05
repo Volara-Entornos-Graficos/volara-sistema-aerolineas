@@ -38,13 +38,13 @@ try {
     $error = 'No se pudo cargar el mapa de asientos.';
 }
 
-$occupiedLabels = array_map(static fn(array $seat): string => $seat['fila'] . $seat['columna'], array_filter($seats, static fn(array $seat): bool => $seat['estado'] !== 'disponible'));
+$occupiedLabels = array_values(array_map(static fn(array $seat): string => $seat['fila'] . $seat['columna'], array_filter($seats, static fn(array $seat): bool => $seat['estado'] !== 'disponible')));
 $pageTitle = 'Elegir asiento';
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
-<main>
-    <section class="page-header"><div class="container"><h1>Elegí tu asiento</h1><nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= url('pages/publico/buscar.php') ?>">Buscar vuelos</a></li><li class="breadcrumb-item active">Asientos</li></ol></nav></div></section>
+<main id="contenido-principal" tabindex="-1">
+    <section class="page-header"><div class="container"><h1>Elegí tu asiento</h1><?= bookingSteps('asiento') ?><nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= url('pages/publico/buscar.php') ?>">Buscar vuelos</a></li><li class="breadcrumb-item active">Asientos</li></ol></nav></div></section>
     <section class="section seat-selection-page"><div class="container">
         <?php if ($error): ?><div class="volara-alert alert-danger" role="alert"><?= e($error) ?></div><a href="<?= url('pages/publico/buscar.php') ?>" class="btn btn-volara">Volver a buscar</a><?php else: ?>
             <div class="seat-selection-layout">
@@ -59,7 +59,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                     </div>
                     <div class="seat-legend" aria-label="Leyenda de asientos"><span class="seat-legend-item"><span class="seat available"></span>Disponible</span><span class="seat-legend-item"><span class="seat selected"></span>Seleccionado</span><span class="seat-legend-item"><span class="seat occupied"></span>Ocupado</span></div>
                 </section>
-                <aside class="seat-trip-summary"><div class="volara-card"><span class="eyebrow">Resumen del viaje</span><h2 class="h4 mt-2"><?= e($flight['origen_codigo']) ?> <span class="text-muted">→</span> <?= e($flight['destino_codigo']) ?></h2><p class="text-muted mb-4"><?= formatDate($flight['fecha_salida']) ?> · <?= formatTime($flight['fecha_salida']) ?> - <?= formatTime($flight['fecha_llegada']) ?></p><dl class="seat-summary-details"><div><dt>Pasajero</dt><dd><?= e($user['nombre'] . ' ' . $user['apellido']) ?></dd></div><div><dt>Asiento</dt><dd id="selectedSeatLabel">Elegí un asiento</dd></div><div><dt>Disponibles</dt><dd><?= (int)$flight['asientos_disponibles'] ?></dd></div></dl><form method="POST" action="<?= url('pages/usuario/checkout.php') ?>" id="seatForm"><input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>"><input type="hidden" name="vuelo_id" value="<?= (int)$flight['id'] ?>"><input type="hidden" name="asiento_id" id="selectedSeatId"><input type="hidden" name="asiento_label" id="selectedSeatInput"><button type="submit" class="btn btn-volara w-100 btn-volara-lg" id="continueSeatButton" disabled>Continuar <i class="bi bi-arrow-right" aria-hidden="true"></i></button></form></div></aside>
+                <aside class="seat-trip-summary"><div class="volara-card"><span class="eyebrow">Resumen del viaje</span><h2 class="h4 mt-2"><?= e($flight['origen_codigo']) ?> <span class="text-muted">→</span> <?= e($flight['destino_codigo']) ?></h2><p class="text-muted mb-4"><?= formatDate($flight['fecha_salida']) ?> · <?= formatTime($flight['fecha_salida']) ?> - <?= formatTime($flight['fecha_llegada']) ?></p><dl class="seat-summary-details"><div><dt>Pasajero</dt><dd><?= e($user['nombre'] . ' ' . $user['apellido']) ?></dd></div><div><dt>Asiento</dt><dd id="selectedSeatLabel">Elegí un asiento</dd></div><div><dt>Disponibles</dt><dd><?= (int)$flight['asientos_disponibles'] ?></dd></div><div><dt>Tarifa del vuelo</dt><dd><?= formatPrice((float)$flight['precio']) ?></dd></div></dl><form method="POST" action="<?= url('pages/usuario/checkout.php') ?>" id="seatForm"><input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>"><input type="hidden" name="vuelo_id" value="<?= (int)$flight['id'] ?>"><input type="hidden" name="asiento_id" id="selectedSeatId"><input type="hidden" name="asiento_label" id="selectedSeatInput"><button type="submit" class="btn btn-volara w-100 btn-volara-lg" id="continueSeatButton" disabled>Continuar <i class="bi bi-arrow-right" aria-hidden="true"></i></button></form></div></aside>
             </div>
         <?php endif; ?>
     </div></section>

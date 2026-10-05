@@ -90,7 +90,38 @@ function flightDuration(string $departure, string $arrival): string
 
 function generateCode(string $prefix, int $length = 6): string
 {
-    return strtoupper($prefix . bin2hex(random_bytes($length / 2)));
+    $bytes = max(1, (int) ceil($length / 2));
+    return strtoupper($prefix . substr(bin2hex(random_bytes($bytes)), 0, $length));
+}
+
+function generateUniqueReservationCode(PDO $db): string
+{
+    for ($attempt = 0; $attempt < 8; $attempt++) {
+        $code = generateCode('VR', 8);
+        $stmt = $db->prepare('SELECT id FROM reservas WHERE codigo = ? LIMIT 1');
+        $stmt->execute([$code]);
+        if (!$stmt->fetch()) {
+            return $code;
+        }
+    }
+
+    throw new RuntimeException('No se pudo generar un código de reserva único.');
+}
+
+function bookingSteps(string $current): string
+{
+    $steps = [
+        'detalle'      => '1. Detalle',
+        'asiento'      => '2. Asiento',
+        'confirmacion' => '3. Confirmación',
+    ];
+    $html = '<nav class="booking-steps" aria-label="Pasos de la reserva"><ol>';
+    foreach ($steps as $key => $label) {
+        $isCurrent = $key === $current;
+        $html .= '<li' . ($isCurrent ? ' aria-current="step" class="is-current"' : '') . '>' . e($label) . '</li>';
+    }
+    $html .= '</ol></nav>';
+    return $html;
 }
 
 function paginate(int $total, int $page, int $perPage = ITEMS_PER_PAGE): array

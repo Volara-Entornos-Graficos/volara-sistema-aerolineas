@@ -101,7 +101,7 @@ function activationEmail(string $name, string $activationUrl): string
                     <tr>
                         <td align="center"
                             style="
-                                background:linear-gradient(135deg,#0d6efd,#084298);
+                                background:linear-gradient(135deg,#E51B23,#C9141C);
                                 padding:32px 25px;
                             ">
 
@@ -117,7 +117,7 @@ function activationEmail(string $name, string $activationUrl): string
                             <div style="
                                 margin-top:8px;
                                 font-size:14px;
-                                color:#dbeafe;
+                                color:#FDEAEB;
                             ">
                                 Volando hacia nuevos destinos
                             </div>
@@ -169,7 +169,7 @@ function activationEmail(string $name, string $activationUrl): string
                                            style="
                                                 display:inline-block;
                                                 padding:15px 32px;
-                                                background-color:#0d6efd;
+                                                background-color:#C9141C;
                                                 color:#ffffff;
                                                 text-decoration:none;
                                                 font-size:16px;
@@ -368,4 +368,3 @@ function resetEmail(string $name, string $resetUrl): string
     </body>
     </html>';
 }
-

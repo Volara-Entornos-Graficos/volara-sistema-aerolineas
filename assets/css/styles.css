@@ -95,17 +95,17 @@ h1, h2, h3, h4, h5, h6 {
 .volara-navbar .nav-link {
     color: var(--volara-dark);
     font-weight: 500;
-    font-size: 0.925rem;
+    font-size: 0.875rem;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.55rem 0.85rem;
+    padding: 0.5rem 0.75rem;
     border-radius: var(--radius-sm);
-    transition: color var(--transition), background var(--transition), transform var(--transition);
+    transition: color var(--transition), background var(--transition);
 }
 .volara-navbar .nav-link:hover,
 .volara-navbar .nav-link.active {
-    color: var(--volara-red);
+    color: var(--volara-red-hover);
     background: var(--volara-red-light);
 }
 .volara-navbar .nav-link:hover { transform: translateY(-1px); }
@@ -117,6 +117,10 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0.25rem 0.5rem;
 }
 .volara-navbar .navbar-toggler:focus { box-shadow: none; }
+.volara-navbar .navbar-toggler:focus-visible {
+    outline: 2px solid var(--volara-red);
+    outline-offset: 2px;
+}
 
 .user-menu .nav-link {
     display: flex;
@@ -142,7 +146,7 @@ h1, h2, h3, h4, h5, h6 {
     height: 32px;
     border-radius: 50%;
     background: var(--volara-red-light);
-    color: var(--volara-red);
+    color: var(--volara-red-hover);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -150,6 +154,29 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.8rem;
 }
 .profile-avatar { width: 52px; height: 52px; font-size: 1rem; flex: 0 0 auto; }
+
+/* ─── Active state enhancement ──────────────────────────── */
+.volara-navbar .nav-link.active {
+    color: var(--volara-red);
+    background: var(--volara-red-light);
+    font-weight: 600;
+}
+
+/* ─── Responsive navbar ─────────────────────────────────── */
+@media (max-width: 991.98px) {
+    .volara-navbar .navbar-collapse {
+        background: var(--volara-white);
+        padding: 1rem;
+        border-top: 1px solid var(--volara-border);
+        margin-top: 0.5rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+    }
+    .volara-navbar .navbar-nav { gap: 0.25rem; }
+    .volara-navbar .nav-link { width: 100%; }
+    .volara-navbar .navbar-nav.ms-auto { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--volara-border); }
+    .volara-navbar .btn-volara-sm { display: inline-flex; width: 100%; justify-content: center; margin-top: 0.25rem; }
+}
 
 /* ─── Buttons ───────────────────────────────────────────── */
 .btn-volara {
@@ -401,9 +428,10 @@ h1, h2, h3, h4, h5, h6 {
 .badge-approved  { background: #D1FAE5; color: #065F46; }
 .badge-confirmed { background: #DBEAFE; color: #1E40AF; }
 .badge-denied    { background: #FEE2E2; color: #991B1B; }
-.badge-cancelled { background: #F3F4F6; color: #6B7280; }
+.badge-cancelled { background: #F3F4F6; color: #5F6670; }
 .badge-neutral   { background: #E8ECF0; color: var(--volara-dark); }
-.badge-promo     { background: var(--volara-red-light); color: var(--volara-red); }
+.badge-promo     { background: var(--volara-red-light); color: var(--volara-red-hover); }
+
 
 /* ─── Forms ─────────────────────────────────────────────── */
 .volara-input,
@@ -424,7 +452,7 @@ h1, h2, h3, h4, h5, h6 {
     border-color: var(--volara-red);
     box-shadow: 0 0 0 3px rgba(229, 27, 35, 0.12);
 }
-.volara-input::placeholder { color: #A0A8B0; }
+.volara-input::placeholder { color: var(--volara-gray); }
 
 .volara-label {
     display: block;
@@ -448,48 +476,70 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── Hero ──────────────────────────────────────────────── */
 .hero {
-    background-image: url('../img/destinos/138416-avion_blanco_en_el_aire_durante_el_dia-3840x2160.jpg');
-    background-size: cover;
-    background-position: center 42%;
-    padding: 4rem 0 5rem;
     position: relative;
+    isolation: isolate;
+    padding: 4.5rem 0 4rem;
     overflow: hidden;
+    background: var(--volara-dark);
 }
 .hero::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(10, 14, 19, 0.56);
+    z-index: 0;
+    background: url('../img/destinos/138416-avion_blanco_en_el_aire_durante_el_dia-3840x2160.jpg') center 43% / cover no-repeat;
     pointer-events: none;
 }
-.hero > .container {
-    position: relative;
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
     z-index: 1;
+    background: linear-gradient(180deg, rgba(10, 14, 19, 0.62), rgba(10, 14, 19, 0.76));
+    pointer-events: none;
+}
+
+.hero-shell {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-copy {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .hero-title {
-    font-size: clamp(2rem, 5vw, 3.25rem);
-    font-weight: 800;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+    font-size: clamp(2.45rem, 4.5vw, 4.25rem);
+    font-weight: 700;
     color: var(--volara-white);
-    line-height: 1.15;
-    margin-bottom: 1rem;
+    line-height: 1.05;
+    letter-spacing: -0.045em;
 }
-.hero-title span { color: #FF6B70; }
+.hero-title span { color: var(--volara-red); }
 
 .hero-subtitle {
-    font-size: 1.125rem;
-    color: rgba(255, 255, 255, 0.88);
-    max-width: 520px;
-    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: clamp(1rem, 1.4vw, 1.15rem);
+    color: rgba(255, 255, 255, 0.78);
 }
+
+.hero-showcase { display: none; }
 
 /* ─── Search Box ────────────────────────────────────────── */
 .search-box {
+    position: relative;
+    z-index: 3;
+    margin: 2.5rem auto 0;
     background: var(--volara-white);
     border-radius: var(--radius-xl);
     padding: 2rem;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--volara-border);
+    box-shadow: 0 20px 48px rgba(10, 14, 19, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .search-box .trip-toggle {
@@ -516,8 +566,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .search-fields {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1.2fr 1.2fr 1fr 0.9fr 0.9fr auto;
+    gap: 0.875rem;
     align-items: start;
 }
 .search-fields .search-btn-wrap {
@@ -546,6 +596,11 @@ h1, h2, h3, h4, h5, h6 {
 .alert-info    { background: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
 
 /* ─── Tables ────────────────────────────────────────────── */
+.volara-table-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
 .volara-table {
     width: 100%;
     border-collapse: separate;
@@ -671,8 +726,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 .seat.occupied {
     background: #E8ECF0;
-    border-color: #E8ECF0;
-    color: #A0A8B0;
+    border: 2px dashed #6B7280;
+    color: #4B5563;
     cursor: not-allowed;
 }
 
@@ -750,7 +805,7 @@ h1, h2, h3, h4, h5, h6 {
 .seat-map-modern .seat { background: #DDEAFF; border-color: #C5D9F5; color: #37649A; border-radius: 8px 8px 5px 5px; }
 .seat-map-modern .seat:hover:not(.occupied):not(.selected) { background: #BBD3F5; border-color: #7FAAE5; color: #244B7B; }
 .seat-map-modern .seat.selected { background: var(--volara-red); border-color: var(--volara-red); color: var(--volara-white); }
-.seat-map-modern .seat.occupied { background: #EEF0F2; border-color: #E1E4E8; color: #A0A8B0; }
+.seat-map-modern .seat.occupied { background: #EEF0F2; border-color: #6B7280; color: #4B5563; }
 .seat-map-modern .seat-aisle { width: 1rem; }
 .reservation-success { text-align: center; padding: 2.5rem; }
 .reservation-success-icon { width: 56px; height: 56px; display: grid; place-items: center; margin: 0 auto 1rem; border-radius: 50%; background: #D1FAE5; color: #047857; font-size: 1.75rem; }
@@ -871,8 +926,180 @@ h1, h2, h3, h4, h5, h6 {
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.dashboard-grid > * {
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.dashboard-grid > :hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ─── Admin Dashboard Stats ─────────────────────────────── */
+.admin-stat-card {
+    background: var(--volara-white);
+    border: 1px solid var(--volara-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+    transition: box-shadow var(--transition), border-color var(--transition);
+}
+.admin-stat-card:hover {
+    border-color: var(--volara-red);
+    box-shadow: var(--shadow-md);
+}
+.admin-stat-card .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+}
+.admin-stat-card .stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--volara-dark);
+    line-height: 1;
+}
+.admin-stat-card .stat-label {
+    font-size: 0.75rem;
+    color: var(--volara-gray);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ─── CEO Dashboard Stats ─────────────────────────────── */
+.ceo-stat-card {
+    background: var(--volara-white);
+    border: 1px solid var(--volara-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+    transition: box-shadow var(--transition), border-color var(--transition);
+}
+.ceo-stat-card:hover {
+    border-color: var(--volara-red);
+    box-shadow: var(--shadow-md);
+}
+.ceo-stat-card .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+}
+.ceo-stat-card .stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--volara-dark);
+    line-height: 1;
+}
+.ceo-stat-card .stat-label {
+    font-size: 0.85rem;
+    color: var(--volara-gray);
+    font-weight: 500;
+}
+
+/* ─── Enhanced Table Rows ───────────────────────────────── */
+.volara-table tbody tr td {
+    transition: background var(--transition);
+}
+.volara-table tbody tr:hover td {
+    background: var(--volara-gray-light);
+}
+
+/* ─── Enhanced Pagination ───────────────────────────────── */
+.volara-pagination a:hover {
+    border-color: var(--volara-red);
+    color: var(--volara-red);
+    background: var(--volara-red-light);
+}
+
+/* ─── Enhanced Buttons for Forms ────────────────────────── */
+.form-actions .btn-volara {
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+}
+
+/* ─── Enhanced Badges for States ──────────────────────── */
+.badge-pending,
+.badge-approved,
+.badge-denied,
+.badge-cancelled,
+.badge-neutral,
+.badge-promo {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ─── Enhanced Alerts ───────────────────────────────────── */
+.volara-alert {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+}
+
+/* ─── Section Title Enhancement ─────────────────────────── */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--volara-gray-light);
+}
+
+/* ─── Page Header ──────────────────────────────────────── */
+.page-header {
+    background: var(--volara-white);
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--volara-border);
     margin-bottom: 2rem;
+}
+
+/* ─── Form Labels ──────────────────────────────────────── */
+.volara-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--volara-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+/* ─── Focus states enhancement ────────────────────────── */
+.volara-input:focus,
+.volara-select:focus {
+    border-color: var(--volara-red);
+    box-shadow: 0 0 0 3px rgba(229, 27, 35, 0.12);
+    outline: none;
+}
+
+/* ─── Reduced motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-grid > * {
+        transition: none;
+    }
+    .volara-table tbody tr:hover {
+        background: var(--volara-white);
+    }
 }
 
 /* ─── Novedades Cards ───────────────────────────────────── */
@@ -909,7 +1136,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ─── Responsive ────────────────────────────────────────── */
-@media (max-width: 991.98px) {
+@media (max-width: 1199.98px) {
+    .search-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .search-btn-wrap { grid-column: 1 / -1; }
     .volara-navbar .navbar-collapse {
         background: var(--volara-white);
         padding: 1rem;
@@ -923,12 +1152,17 @@ h1, h2, h3, h4, h5, h6 {
     .volara-navbar .navbar-nav.ms-auto { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--volara-border); }
     .volara-navbar .btn-volara-sm { display: inline-flex; width: 100%; justify-content: center; margin-top: 0.25rem; }
     .user-menu .dropdown-menu { margin-top: 0.25rem; box-shadow: none !important; }
+}
+
+@media (max-width: 991.98px) {
     .flight-detail-layout,
     .seat-selection-layout { grid-template-columns: 1fr; }
     .flight-summary-card { position: static; }
     .flight-route { gap: 1rem; }
     .flight-airport .code { font-size: 1.4rem; }
     .flight-price { margin-left: 0; margin-top: 1rem; text-align: left; }
+    .search-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .search-btn-wrap { grid-column: 1 / -1; }
 }
 
 @media (max-width: 767.98px) {
@@ -936,14 +1170,21 @@ h1, h2, h3, h4, h5, h6 {
         width: 48px;
         height: 48px;
     }
-    .hero { padding: 2.5rem 0 3rem; }
-    .search-box { padding: 1.25rem; border-radius: var(--radius-lg); }
+    .hero { padding: 3rem 0 2.5rem; }
+    .hero::before { background-position: 58% center; }
+    .hero-title { font-size: clamp(2.2rem, 8vw, 3.25rem); }
+    .search-box {
+        padding: 1.25rem;
+        border-radius: var(--radius-lg);
+        margin-top: 2rem;
+    }
     .search-fields { grid-template-columns: 1fr; }
+    .search-btn-wrap { grid-column: auto; }
+    .search-fields .search-btn-wrap { padding-top: 0.25rem; }
     .section { padding: 2.5rem 0; }
 
     .volara-table-responsive {
         display: block;
-        overflow-x: auto;
     }
 
     .flight-card { padding: 1.25rem; }
@@ -969,13 +1210,43 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 575.98px) {
-    .hero-title { font-size: 1.75rem; }
+    .hero-title { font-size: clamp(2rem, 9vw, 2.5rem); }
+    .hero-subtitle { font-size: 0.98rem; }
+    .search-box { padding: 1rem; }
     .seat { width: 34px; height: 34px; font-size: 0.6rem; }
 }
 
 /* ─── Accessibility ─────────────────────────────────────── */
 :focus-visible {
     outline: 2px solid var(--volara-red);
+    outline-offset: 2px;
+}
+
+/* ─── Skip link / Accesibilidad ─────────────────────────── */
+.skip-link {
+    position: fixed !important;
+    top: -100px !important;
+    left: 20px !important;
+    z-index: 99999 !important;
+
+    padding: 0.7rem 1rem;
+    background: var(--volara-dark);
+    color: var(--volara-white) !important;
+    border: 2px solid var(--volara-red);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none !important;
+
+    box-shadow: var(--shadow-md);
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+    top: 12px !important;
+    color: var(--volara-white) !important;
+    outline: 3px solid var(--volara-red);
     outline-offset: 2px;
 }
 
@@ -995,5 +1266,639 @@ h1, h2, h3, h4, h5, h6 {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* ─── Passenger booking flow ─────────────────────────────── */
+.page-header {
+    background: var(--volara-gray-light);
+    padding: 2rem 0;
+}
+
+.page-header h1 {
+    font-size: clamp(1.65rem, 3vw, 2.15rem);
+    letter-spacing: -0.035em;
+}
+
+.booking-steps {
+    margin: 1rem 0;
+}
+
+.booking-steps ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.booking-steps li {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--volara-border);
+    border-radius: 100px;
+    color: var(--volara-gray);
+    background: var(--volara-white);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.booking-steps li.is-current {
+    color: var(--volara-red-hover);
+    border-color: var(--volara-red-light);
+    background: var(--volara-red-light);
+}
+
+.results-page .flight-card,
+.volara-card,
+.seat-cabin-panel {
+    border-color: var(--volara-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.results-page .flight-card {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.results-page .flight-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--volara-border);
+    box-shadow: var(--shadow-md);
+}
+
+.results-page .flight-card .promo-badge {
+    position: static;
+    margin: 0 0 1rem auto;
+    width: fit-content;
+}
+
+.results-page .flight-card > .d-flex {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.results-page .flight-card .flight-route {
+    gap: clamp(0.75rem, 3vw, 2rem);
+    padding: 0.6rem 0;
+}
+
+.results-page .flight-card .flight-airport {
+    min-width: 0;
+    flex: 0 1 150px;
+    text-align: left;
+}
+
+.results-page .flight-card .flight-airport:last-child {
+    text-align: right;
+}
+
+.results-page .flight-card .flight-airport .code {
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    letter-spacing: -0.04em;
+}
+
+.results-page .flight-card .flight-airport .time {
+    color: var(--volara-dark);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.results-page .flight-card .flight-airport .city {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.results-page .flight-card .flight-line .duration {
+    color: var(--volara-gray);
+    font-size: 0.78rem;
+}
+
+.results-page .flight-card .flight-meta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto auto;
+    gap: 0.75rem 1rem;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
+
+.results-page .flight-price {
+    display: grid;
+    gap: 0.1rem;
+    justify-self: start;
+}
+
+.results-page .flight-price .amount {
+    font-size: clamp(1.35rem, 2vw, 1.7rem);
+    letter-spacing: -0.035em;
+}
+
+.results-page .flight-card .btn {
+    white-space: nowrap;
+}
+
+.results-page .flight-card .flight-meta > .volara-badge {
+    justify-self: start;
+}
+
+.badge-pending,
+.badge-denied {
+    background: var(--volara-red-light);
+    color: var(--volara-red-hover);
+}
+
+.badge-approved,
+.badge-cancelled,
+.badge-neutral {
+    background: var(--volara-gray-light);
+    color: var(--volara-dark);
+}
+
+.badge-confirmed {
+    background: var(--volara-dark);
+    color: var(--volara-white);
+}
+
+.badge-promo {
+    background: var(--volara-red-light);
+    color: var(--volara-red-hover);
+}
+
+.volara-alert.alert-success,
+.volara-alert.alert-info,
+.volara-alert.alert-warning {
+    background: var(--volara-gray-light);
+    border-color: var(--volara-border);
+    color: var(--volara-dark);
+}
+
+.volara-alert.alert-danger {
+    background: var(--volara-red-light);
+    border-color: var(--volara-red-light);
+    color: var(--volara-red-hover);
+}
+
+.flight-detail-layout {
+    gap: 1.5rem;
+}
+
+.flight-detail-card,
+.flight-summary-card,
+.seat-trip-summary .volara-card {
+    padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.flight-detail-route {
+    grid-template-columns: minmax(0, 1fr) minmax(100px, auto) minmax(0, 1fr);
+    gap: clamp(0.75rem, 3vw, 1.5rem);
+    border-color: var(--volara-border);
+}
+
+.flight-detail-route strong {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    letter-spacing: -0.04em;
+}
+
+.flight-detail-route > div:first-child {
+    text-align: left;
+}
+
+.flight-detail-route > div:last-child {
+    text-align: right;
+}
+
+.flight-detail-info,
+.seat-summary-details,
+.reservation-details {
+    gap: 1rem;
+}
+
+.flight-detail-info div,
+.seat-summary-details div,
+.reservation-details div {
+    min-width: 0;
+    padding: 0.8rem;
+    border: 1px solid var(--volara-border);
+    border-radius: var(--radius-md);
+    background: var(--volara-white);
+}
+
+.flight-detail-info dt,
+.seat-summary-details dt,
+.reservation-details dt {
+    letter-spacing: 0.04em;
+}
+
+.flight-summary-card {
+    border: 1px solid var(--volara-border);
+    box-shadow: var(--shadow-md);
+}
+
+.flight-summary-card .volara-alert {
+    margin: 1rem 0;
+}
+
+.flight-summary-price {
+    padding-top: 1rem;
+    border-top: 1px solid var(--volara-border);
+}
+
+.flight-summary-price strong {
+    font-size: clamp(1.8rem, 3vw, 2.25rem);
+    letter-spacing: -0.04em;
+}
+
+.seat-cabin-panel {
+    padding: clamp(1rem, 3vw, 1.5rem);
+    background: var(--volara-white);
+}
+
+.seat-airplane {
+    max-width: 100%;
+    padding: 1.25rem 0.75rem;
+    overflow-x: auto;
+    background: var(--volara-gray-light);
+    border-radius: 48% 48% 20px 20px / 28px 28px 20px 20px;
+}
+
+.seat-map-modern {
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+    gap: 0.55rem;
+}
+
+.seat-map-modern .seat-map-header {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    margin-bottom: 0.25rem;
+}
+
+.seat-column-labels {
+    grid-template-columns: repeat(6, 40px);
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.seat-map-modern .seat-row {
+    gap: 0.5rem;
+}
+
+.seat-map-modern .seat {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 42px;
+    border: 1px solid var(--volara-border);
+    border-radius: 10px 10px 6px 6px;
+    background: var(--volara-white);
+    color: var(--volara-dark);
+    box-shadow: 0 2px 4px rgba(21, 29, 37, 0.06);
+}
+
+.seat-map-modern .seat:hover:not(.occupied):not(.selected) {
+    border-color: var(--volara-red);
+    background: var(--volara-red-light);
+    color: var(--volara-red-hover);
+}
+
+.seat-map-modern .seat.selected {
+    border-color: var(--volara-red);
+    background: var(--volara-red);
+    color: var(--volara-white);
+    box-shadow: 0 0 0 3px var(--volara-red-light);
+}
+
+.seat-map-modern .seat.selected::after {
+    content: "\2713";
+    margin-left: 0.15rem;
+    font-size: 0.65rem;
+}
+
+.seat-map-modern .seat.occupied {
+    border: 1px dashed var(--volara-gray);
+    background: repeating-linear-gradient(135deg, var(--volara-gray-light), var(--volara-gray-light) 4px, var(--volara-border) 4px, var(--volara-border) 6px);
+    color: var(--volara-gray);
+    box-shadow: none;
+}
+
+.seat-map-modern .seat:focus-visible {
+    outline: 3px solid var(--volara-dark);
+    outline-offset: 2px;
+}
+
+.seat-map-modern .seat-aisle {
+    width: 1.25rem;
+    flex: 0 0 1.25rem;
+}
+
+.seat-legend {
+    gap: 1rem 1.5rem;
+}
+
+.seat-legend-item .seat {
+    border-radius: 6px;
+}
+
+.seat-trip-summary {
+    position: sticky;
+    top: 96px;
+}
+
+.seat-trip-summary form {
+    margin-top: 1.25rem;
+}
+
+.seat-trip-summary .btn {
+    min-height: 48px;
+}
+
+.reservation-success {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid var(--volara-border);
+    box-shadow: var(--shadow-md);
+}
+
+.reservation-success-icon {
+    background: var(--volara-red-light);
+    color: var(--volara-red);
+}
+
+.reservation-success .reservation-details {
+    text-align: left;
+}
+
+.reservation-success .flight-summary-price > strong {
+    color: var(--volara-gray);
+    font-size: 1.1rem;
+    letter-spacing: 0;
+}
+
+.reservation-discount,
+.reservation-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.reservation-discount {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--volara-border);
+}
+
+.reservation-discount strong {
+    color: var(--volara-red-hover);
+    font-size: 1rem;
+}
+
+.reservation-total {
+    padding-top: 0.75rem;
+    color: var(--volara-dark);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.reservation-total strong {
+    color: var(--volara-red-hover);
+    font-size: clamp(1.8rem, 3vw, 2.25rem);
+}
+
+.reservation-code-label {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--volara-gray);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.reservation-card {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.reservation-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.reservation-card-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    align-items: center;
+}
+
+.reservation-card-meta strong {
+    color: var(--volara-red-hover);
+    font-size: 1.35rem;
+}
+
+.reservation-card-actions form {
+    margin: 0;
+}
+
+.reservation-card-actions .btn-outline-danger {
+    border-color: var(--volara-border);
+    color: var(--volara-dark);
+}
+
+.reservation-card-actions .btn-outline-danger:hover {
+    border-color: var(--volara-red);
+    background: var(--volara-red-light);
+    color: var(--volara-red-hover);
+}
+
+.volara-table thead th {
+    background: var(--volara-gray-light);
+    color: var(--volara-dark);
+}
+
+.volara-table tbody tr:hover {
+    background: var(--volara-gray-light);
+}
+
+@media (max-width: 991.98px) {
+    .results-page .flight-card .flight-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .results-page .flight-card .flight-price {
+        margin: 0;
+        text-align: left;
+    }
+
+    .seat-trip-summary {
+        position: static;
+    }
+
+    .reservation-card-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .reservation-card-meta strong {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .flight-detail-route {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .flight-detail-route strong {
+        font-size: clamp(1.8rem, 8vw, 2.25rem);
+    }
+
+    .seat-airplane {
+        padding-inline: 0.35rem;
+        overflow-x: hidden;
+    }
+
+    .seat-map-modern .seat {
+        flex-basis: 36px;
+        width: 36px;
+        height: 40px;
+        font-size: 0.65rem;
+    }
+
+    .seat-column-labels {
+        grid-template-columns: repeat(6, 36px);
+        gap: 0.5rem;
+    }
+
+    .seat-map-modern .seat-row {
+        gap: 0.35rem;
+    }
+
+    .seat-map-modern .seat-row-number {
+        width: 18px;
+        flex: 0 0 18px;
+    }
+
+    .seat-map-modern .seat-aisle {
+        width: 0.7rem;
+        flex-basis: 0.7rem;
+    }
+
+    .reservation-card-top {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .reservation-card-meta {
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .page-header {
+        padding: 1.5rem 0;
+    }
+
+    .results-page .flight-card .flight-route {
+        gap: 0.5rem;
+    }
+
+    .results-page .flight-card .flight-airport {
+        flex-basis: 0;
+        flex-grow: 1;
+    }
+
+    .results-page .flight-card .flight-airport .code {
+        font-size: 1.45rem;
+    }
+
+    .results-page .flight-card .flight-line .duration {
+        font-size: 0.68rem;
+        padding-inline: 0.25rem;
+    }
+
+    .results-page .flight-card .flight-meta {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+
+    .results-page .flight-card .flight-meta .flight-price {
+        text-align: left;
+    }
+
+    .results-page .flight-card .flight-meta > .btn {
+        grid-column: 1 / -1;
+        justify-content: center;
+    }
+
+    .flight-detail-route {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 0.4rem;
+    }
+
+    .flight-detail-line span {
+        font-size: 0.65rem;
+    }
+
+    .flight-detail-info,
+    .seat-summary-details,
+    .reservation-details {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .seat-cabin-header {
+        align-items: center;
+    }
+
+    .seat-cabin-header h2 {
+        font-size: 1.15rem;
+    }
+
+    .seat-map-modern .seat {
+        flex-basis: 34px;
+        width: 34px;
+        height: 38px;
+    }
+
+    .seat-column-labels {
+        grid-template-columns: repeat(6, 34px);
+        gap: 0.35rem;
+    }
+
+    .seat-map-modern .seat-row {
+        gap: 0.25rem;
+    }
+
+    .seat-map-modern .seat-row-number {
+        width: 16px;
+        flex-basis: 16px;
+    }
+
+    .seat-map-modern .seat-aisle {
+        width: 0.55rem;
+        flex-basis: 0.55rem;
+    }
+
+    .reservation-card-top {
+        flex-direction: column;
+    }
+
+    .reservation-card-meta {
+        grid-template-columns: 1fr 1fr;
+        flex-direction: column;
+    }
+
+    .reservation-card-actions {
+        justify-content: flex-start;
+    }
+
+    .reservation-card-actions form,
+    .reservation-card-actions .btn {
+        width: 100%;
+    }
+
+    .reservation-success .d-flex .btn {
+        flex: 1 1 100%;
+        justify-content: center;
     }
 }

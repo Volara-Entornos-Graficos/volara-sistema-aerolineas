@@ -73,11 +73,20 @@ try {
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
-<main>
+<main id="contenido-principal" class="management-page management-dashboard admin-dashboard" tabindex="-1">
     <section class="page-header">
         <div class="container">
-            <h1>Panel de administración</h1>
-            <p class="mb-0">Gestioná el contenido general de VOLARA desde un solo lugar.</p>
+            <div class="row g-0 align-items-center">
+                <div class="col-6">
+                    <h1>Panel de administración</h1>
+                    <p class="mb-0">Gestioná el contenido general de VOLARA desde un solo lugar.</p>
+                </div>
+                <div class="col-6 text-end">
+                    <span class="volara-badge badge-pending px-3 py-1 fs-7 fw-semibold">
+                        <?= count($pendingCeos) ?> pending
+                    </span>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -105,8 +114,10 @@ require_once __DIR__ . '/../../includes/navbar.php';
                     ['pendingPromotions', 'Promociones pendientes', 'bi-megaphone', $stats['pendingPromotions']],
                 ] as $stat): ?>
                     <div class="col-6 col-xl-2">
-                        <article class="stat-card h-100">
-                            <div class="stat-icon stat-icon-red"><i class="bi <?= e($stat[2]) ?>" aria-hidden="true"></i></div>
+                        <article class="admin-stat-card h-100">
+                            <div class="stat-icon stat-icon-red">
+                                <i class="bi <?= e($stat[2]) ?>" aria-hidden="true"></i>
+                            </div>
                             <div class="stat-value"><?= e((string)$stat[3]) ?></div>
                             <div class="stat-label"><?= e($stat[1]) ?></div>
                         </article>
@@ -116,50 +127,62 @@ require_once __DIR__ . '/../../includes/navbar.php';
 
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
-                    <a class="volara-card h-100 d-block" href="<?= url('pages/publico/buscar.php') ?>">
-                        <i class="bi bi-search fs-3 text-danger"></i>
-                        <h2 class="h5 mt-3">Consultar vuelos</h2>
-                        <p class="text-muted mb-0">Revisá la oferta de vuelos publicada.</p>
+                    <a class="volara-card h-100 d-block text-reset" href="<?= url('pages/publico/buscar.php') ?>">
+                        <div class="p-4 text-center">
+                            <i class="bi bi-search fs-3 text-danger"></i>
+                            <h2 class="h5 mt-2">Consultar vuelos</h2>
+                            <p class="text-muted mb-0">Revisá la oferta de vuelos publicada.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <a class="volara-card h-100 d-block" href="<?= url('pages/publico/mapa-sitio.php') ?>">
-                        <i class="bi bi-diagram-3 fs-3 text-danger"></i>
-                        <h2 class="h5 mt-3">Mapa del sitio</h2>
-                        <p class="text-muted mb-0">Accedé a las secciones disponibles del sistema.</p>
+                    <a class="volara-card h-100 d-block text-reset" href="<?= url('pages/publico/mapa-sitio.php') ?>">
+                        <div class="p-4 text-center">
+                            <i class="bi bi-diagram-3 fs-3 text-danger"></i>
+                            <h2 class="h5 mt-3">Mapa del sitio</h2>
+                            <p class="text-muted mb-0">Accedé a las secciones disponibles del sistema.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <a class="volara-card h-100 d-block" href="<?= url('pages/admin/aerolineas.php') ?>">
-                        <i class="bi bi-building fs-3 text-danger"></i>
-                        <h2 class="h5 mt-3">Aerolíneas</h2>
-                        <p class="text-muted mb-0">Creá, editá y administrá aerolíneas.</p>
+                    <a class="volara-card h-100 d-block text-reset" href="<?= url('pages/admin/aerolineas.php') ?>">
+                        <div class="p-4 text-center">
+                            <i class="bi bi-building fs-3 text-danger"></i>
+                            <h2 class="h5 mt-3">Aerolíneas</h2>
+                            <p class="text-muted mb-0">Creá, editá y administrá aerolíneas.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <a class="volara-card h-100 d-block" href="<?= url('pages/admin/promociones.php') ?>">
-                        <i class="bi bi-megaphone fs-3 text-danger"></i>
-                        <h2 class="h5 mt-3">Aprobar promociones</h2>
-                        <p class="text-muted mb-0">Revisá y publicá promociones de las aerolíneas.</p>
+                    <a class="volara-card h-100 d-block text-reset" href="<?= url('pages/admin/promociones.php') ?>">
+                        <div class="p-4 text-center">
+                            <i class="bi bi-megaphone fs-3 text-danger"></i>
+                            <h2 class="h5 mt-3">Aprobar promociones</h2>
+                            <p class="text-muted mb-0">Revisá y publicá promociones de las aerolíneas.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <a class="volara-card h-100 d-block" href="<?= url('pages/admin/novedades.php') ?>">
-                        <i class="bi bi-newspaper fs-3 text-danger"></i>
-                        <h2 class="h5 mt-3">Gestionar novedades</h2>
-                        <p class="text-muted mb-0">Publicá y programá novedades del sistema.</p>
+                    <a class="volara-card h-100 d-block text-reset" href="<?= url('pages/admin/novedades.php') ?>">
+                        <div class="p-4 text-center">
+                            <i class="bi bi-newspaper fs-3 text-danger"></i>
+                            <h2 class="h5 mt-3">Gestionar novedades</h2>
+                            <p class="text-muted mb-0">Publicá y programá novedades del sistema.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <a class="volara-card h-100 d-block" href="<?= url('pages/admin/reportes.php') ?>">
-                        <i class="bi bi-bar-chart-line fs-3 text-danger"></i>
-                        <h2 class="h5 mt-3">Reportes</h2>
-                        <p class="text-muted mb-0">Consultá ventas, vuelos y usuarios.</p>
+                    <a class="volara-card h-100 d-block text-reset" href="<?= url('pages/admin/reportes.php') ?>">
+                        <div class="p-4 text-center">
+                            <i class="bi bi-bar-chart-line fs-3 text-danger"></i>
+                            <h2 class="h5 mt-3">Reportes</h2>
+                            <p class="text-muted mb-0">Consultá ventas, vuelos y usuarios.</p>
+                        </div>
                     </a>
                 </div>
             </div>
 
-            <div class="volara-card mt-5">
+            <div class="admin-stat-card mt-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h2 class="h4 mb-1">Solicitudes de CEO</h2>
@@ -174,7 +197,7 @@ require_once __DIR__ . '/../../includes/navbar.php';
                         <p class="mb-0">No hay solicitudes pendientes.</p>
                     </div>
                 <?php else: ?>
-                    <div class="volara-table-responsive">
+                    <div class="volara-table-responsive" role="region" aria-label="Solicitudes de cuentas CEO pendientes" tabindex="0">
                         <table class="volara-table">
                             <caption class="visually-hidden">Solicitudes de cuentas CEO pendientes</caption>
                             <thead>

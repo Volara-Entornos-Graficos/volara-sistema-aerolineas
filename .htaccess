@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /volara-sistema-aerolineas/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ 404.php [L]

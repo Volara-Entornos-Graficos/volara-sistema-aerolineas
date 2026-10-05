@@ -21,10 +21,12 @@ $extraCss = $extraCss ?? [];
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="<?= asset('css/styles.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/styles.css') ?>?v=<?= filemtime(APP_ROOT . '/assets/css/styles.css') ?>" rel="stylesheet">
 
     <?php foreach ($extraCss as $css): ?>
         <link href="<?= asset($css) ?>" rel="stylesheet">
     <?php endforeach; ?>
+    <link rel="icon" type="image/png" sizes="256x256" href="<?= asset('img/logo/volara-mark-256.png') ?>">
 </head>
 <body>
+<a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
