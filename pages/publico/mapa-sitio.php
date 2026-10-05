@@ -19,9 +19,9 @@ $mapa = [
 
 if (!isLoggedIn()) {
     $mapa['Autenticación'] = [
-        'Iniciar sesión'        => 'auth/login.php',
-        'Registrarse'           => 'auth/registro.php',
-        'Recuperar contraseña'  => 'auth/recuperar.php',
+        'Iniciar sesión'       => 'auth/login.php',
+        'Registrarse'          => 'auth/registro.php',
+        'Recuperar contraseña' => 'auth/recuperar.php',
     ];
 }
 
@@ -47,26 +47,32 @@ if ($role === 'ceo') {
 
 if ($role === 'admin') {
     $mapa['Administrador'] = [
-        'Dashboard'             => 'pages/admin/inicioAdmin.php',
-        'Aerolíneas'            => 'pages/admin/aerolineas.php',
-        'Promociones'           => 'pages/admin/promociones.php',
-        'Novedades'             => 'pages/admin/novedades.php',
-        'Reportes'              => 'pages/admin/reportes.php',
-        'Mi perfil'             => 'pages/usuario/perfil.php',
+        'Dashboard'    => 'pages/admin/inicioAdmin.php',
+        'Aerolíneas'   => 'pages/admin/aerolineas.php',
+        'Promociones'  => 'pages/admin/promociones.php',
+        'Novedades'    => 'pages/admin/novedades.php',
+        'Reportes'     => 'pages/admin/reportes.php',
+        'Mi perfil'    => 'pages/usuario/perfil.php',
     ];
 }
 
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
 ?>
+
 <main id="contenido-principal" tabindex="-1">
     <div class="page-header">
         <div class="container">
             <h1>Mapa del sitio</h1>
+
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?= url('index.php') ?>">Inicio</a></li>
-                    <li class="breadcrumb-item active">Mapa del sitio</li>
+                    <li class="breadcrumb-item">
+                        <a href="<?= url('index.php') ?>">Inicio</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Mapa del sitio
+                    </li>
                 </ol>
             </nav>
         </div>
@@ -74,27 +80,35 @@ require_once __DIR__ . '/../../includes/navbar.php';
 
     <section class="section">
         <div class="container">
-            <p class="text-muted mb-4">Solo se muestran las secciones que podés usar con tu sesión actual.</p>
+            <p class="text-muted mb-4">
+                Solo se muestran las secciones que podés usar con tu sesión actual.
+            </p>
+
             <div class="row g-4">
                 <?php foreach ($mapa as $seccion => $paginas): ?>
-                <div class="col-md-6 col-lg-4">
-                    <div class="volara-card h-100">
-                        <h2 class="h5 mb-3"><?= e($seccion) ?></h2>
-                        <ul class="list-unstyled mb-0">
-                            <?php foreach ($paginas as $nombre => $ruta): ?>
-                            <li class="mb-2">
-                                <a href="<?= url($ruta) ?>">
-                                    <i class="bi bi-chevron-right me-1 text-muted" aria-hidden="true"></i>
-                                    <?= e($nombre) ?>
-                                </a>
-                            </li>
-                            <?php endforeach; ?>
-                        </ul>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="volara-card h-100">
+                            <h2 class="h5 mb-3"><?= e($seccion) ?></h2>
+
+                            <ul class="list-unstyled mb-0">
+                                <?php foreach ($paginas as $nombre => $ruta): ?>
+                                    <li class="mb-2">
+                                        <a href="<?= url($ruta) ?>">
+                                            <i
+                                                class="bi bi-chevron-right me-1 text-muted"
+                                                aria-hidden="true"
+                                            ></i>
+                                            <?= e($nombre) ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             </div>
         </div>
     </section>
 </main>
+
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
